@@ -16,7 +16,7 @@
 		<string>Icon-Small-50</string>
 	</array>
 	<key>CFBundleIdentifier</key>
-	<string>BuscarSalud.com.${PRODUCT_NAME:rfc1034identifier}</string>
+	<string>com.BuscarSalud.${PRODUCT_NAME:rfc1034identifier}</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -58,8 +58,6 @@
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 </dict>
 </plist>
