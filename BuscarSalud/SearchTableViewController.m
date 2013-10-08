@@ -11,6 +11,10 @@
 #import "iOSRequest.h"
 #import "NSString+WebService.h"
 #import "AppDelegate.h"
+#import "GAIDictionaryBuilder.h"
+#import "GAIFields.h"
+#import "GAITrackedViewController.h"
+#import "GAI.h"
 
 @interface SearchTableViewController (){
     NSDictionary *specialties;
@@ -18,6 +22,8 @@
 }
 
 @end
+
+
 
 @implementation SearchTableViewController{
     CLLocationManager *locationManager;
@@ -91,6 +97,18 @@
     }];
     */
     
+    [super viewWillAppear:animated];
+    
+    // returns the same tracker you created in your app delegate
+    // defaultTracker originally declared in AppDelegate.m
+    id tracker = [[GAI sharedInstance] defaultTracker];
+    
+    // This screen name value will remain set on the tracker and sent with
+    // hits until it is set to a new value or to nil.
+    [tracker set:kGAIScreenName value:@"Home Screen"];
+    
+    // manual screen tracking
+    [tracker send:[[GAIDictionaryBuilder createAppView] build]];
 }
 
 - (void)didReceiveMemoryWarning

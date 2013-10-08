@@ -34,7 +34,7 @@
                                                                     UITextAttributeTextShadowOffset,
                                                                     [UIFont fontWithName:@"HelveticaNeue-CondensedBlack" size:21.0], UITextAttributeFont, nil]];
     
-	[webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://ws.buscarsalud.local/get_privacy_policy.php"]]];
+	[webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://ws.buscarsalud.com/get_privacy_policy.php"]]];
 }
 
 - (void)didReceiveMemoryWarning

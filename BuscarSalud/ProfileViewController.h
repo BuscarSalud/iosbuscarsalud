@@ -8,10 +8,12 @@
 
 #import <UIKit/UIKit.h>
 #import <MessageUI/MessageUI.h>
+#import "GADBannerView.h"
 
 @interface ProfileViewController : UIViewController <MFMailComposeViewControllerDelegate>{
     UIImageView *containerView;
     IBOutlet UIScrollView *scroller;
+    GADBannerView *bannerView_;
 }
 
 @property (nonatomic, strong) NSDictionary *doc;
@@ -29,6 +31,9 @@
 @property (weak, nonatomic) IBOutlet UILabel *specialtyLabel;
 @property (weak, nonatomic) IBOutlet UIButton *sendMail;
 @property (weak, nonatomic) IBOutlet UILabel *stateLabel;
+@property (weak, nonatomic) IBOutlet UIImageView *phoneImageView;
+
+
 - (IBAction)goBack:(id)sender;
 - (IBAction)butttonSendMail:(id)sender;
 @end

@@ -37,7 +37,7 @@
 @end
 
 @implementation ProfileInRequestViewController
-@synthesize nidReceived, phoneLabel, imageProfile, streetLabel, coloniaLabel, specialtyLabel, fromMap, subTitleLabel, stateLabel, loginSuccess, doctorInfo;
+@synthesize nidReceived, phoneLabel, imageProfile, streetLabel, coloniaLabel, specialtyLabel, fromMap, subTitleLabel, stateLabel, loginSuccess, doctorInfo, phoneImageView;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -53,6 +53,7 @@
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
     
+    phoneImageView.hidden = YES;
     self.navigationItem.hidesBackButton = YES;
     if ([loginSuccess isEqualToString:@"1"]) {
         subTitleLabel.text = [doctorInfo objectForKey:@"name"];
@@ -64,6 +65,7 @@
         [self getDoctor:nidReceived];
         //[sendMail setAlpha:0.0];
     }
+    [self.tabBarItem setTitle:@"Mi Perfil"];
     
     UIFont *sourceSansProSemibold = [UIFont fontWithName:@"SourceSansPro-Semibold" size:18];
     UIFont *sourceSansProSemiboldHeader = [UIFont fontWithName:@"SourceSansPro-Semibold" size:16];
@@ -209,7 +211,7 @@
         [scroller addSubview:pointsContainerView];
         [scroller addSubview:pointsLabel];
     }
-    
+    phoneImageView.hidden = NO;
     
 }
 - (IBAction)goBack:(id)sender {

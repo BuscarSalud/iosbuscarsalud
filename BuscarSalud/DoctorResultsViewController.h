@@ -8,8 +8,12 @@
 
 #import <UIKit/UIKit.h>
 #import "getInfoEngine.h"
+#import "GADBannerView.h"
 
-@interface DoctorResultsViewController : UIViewController<UITableViewDataSource, UITableViewDelegate, UIPickerViewDataSource, UIPickerViewDelegate>
+@interface DoctorResultsViewController : UIViewController<UITableViewDataSource, UITableViewDelegate, UIPickerViewDataSource, UIPickerViewDelegate>{
+    
+    GADBannerView *bannerView_;
+}
 
 - (IBAction)goBack:(id)sender;
 
@@ -39,12 +43,19 @@
 //@property (weak, nonatomic) IBOutlet UITableView *tableViewBack;
 @property (retain, nonatomic)NSMutableArray *stat;
 
-@property (retain, nonatomic)NSArray *specialities;
+@property (retain, nonatomic)NSMutableArray *specialities;
 //@property (weak, nonatomic) IBOutlet UITableView *tableViewSpec;
 @property (weak, nonatomic) IBOutlet UIPickerView *picker;
+@property (weak, nonatomic) IBOutlet UITableView *optionsTable;
 
 @property (weak, nonatomic) IBOutlet UIView *pickerViewContainer;
 @property (weak, nonatomic) IBOutlet UIButton *searchButton;
+@property (weak, nonatomic) IBOutlet UILabel *optionLabelInPickerView;
+@property (weak, nonatomic) IBOutlet UIPickerView *pickerStates;
+@property (weak, nonatomic) IBOutlet UIImageView *silderImageView;
+@property (weak, nonatomic) IBOutlet UIView *mainView;
+
+
 - (IBAction)searchButton:(id)sender;
 - (IBAction)segmentSortingOptions:(id)sender;
 - (IBAction)selectItem:(id)sender;

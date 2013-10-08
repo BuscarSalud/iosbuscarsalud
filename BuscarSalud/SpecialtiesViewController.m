@@ -17,6 +17,7 @@
     NSMutableArray *spec;
     NSDictionary *states;
     UIView *containerView;
+    NSIndexPath *lastPath;
 }
 
 @end
@@ -36,6 +37,56 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    // Create a view of the standard size at the top of the screen.
+    // Available AdSize constants are explained in GADAdSize.h.
+    bannerView_ = [[GADBannerView alloc] initWithFrame:CGRectMake(0.0,
+                                                                  361.0,
+                                                                  GAD_SIZE_320x50.width,
+                                                                  GAD_SIZE_320x50.height)];
+    
+    bannerView_.translatesAutoresizingMaskIntoConstraints=NO;
+
+    
+    // Specify the ad's "unit identifier". This is your AdMob Publisher ID.
+    bannerView_.adUnitID = @"ca-app-pub-5383770617488734/3234786808";
+    
+    // Let the runtime know which UIViewController to restore after taking
+    // the user wherever the ad goes and add it to the view hierarchy.
+    bannerView_.rootViewController = self;
+    [self.view addSubview:bannerView_];
+    
+    // Constraint keeps ad at the bottom of the screen at all times.
+    [self.view addConstraint:
+     [NSLayoutConstraint constraintWithItem:bannerView_
+                                  attribute:NSLayoutAttributeBottom
+                                  relatedBy:NSLayoutRelationEqual
+                                     toItem:self.view
+                                  attribute:NSLayoutAttributeBottom
+                                 multiplier:1.0
+                                   constant:0]];
+    
+    // Constraint keeps ad in the center of the screen at all times.
+    [self.view addConstraint:
+     [NSLayoutConstraint constraintWithItem:bannerView_
+                                  attribute:NSLayoutAttributeCenterX
+                                  relatedBy:NSLayoutRelationEqual
+                                     toItem:self.view
+                                  attribute:NSLayoutAttributeCenterX
+                                 multiplier:1.0
+                                   constant:0]];
+    
+    GADRequest *request = [GADRequest request];
+    
+    // Make the request for a test ad. Put in an identifier for
+    // the simulator as well as any devices you want to receive test ads.
+    request.testDevices = [NSArray arrayWithObjects:
+                           @"045BB3DE-3CF2-5B56-94AF-85CFDA9C7D1E",
+                           nil];
+
+    // Initiate a generic request to load it with an ad.
+    [bannerView_ loadRequest:request];
+    
+    
     [self getAllStates];
     [self startLoadingBox];
     UIImage *navBackgroundImage = [UIImage imageNamed:@"navbar-background"];
@@ -50,11 +101,6 @@
     
     NSLog(@"%@", longitudeSpec);
     
-    
-}
-
--(void)viewDidAppear:(BOOL)animated
-{
     //+++++++++++++
     NSMutableDictionary *postParams = [[NSMutableDictionary alloc]init];
     [postParams setValue:@"especialidad" forKey:@"todos"];
@@ -79,6 +125,13 @@
     } errorHandler:^(NSError* error){
     }];
     //+++++++++++++
+    
+    
+}
+
+-(void)viewDidAppear:(BOOL)animated
+{
+    [myTableView deselectRowAtIndexPath:lastPath animated:YES];
 }
 
 - (void)didReceiveMemoryWarning
@@ -122,6 +175,11 @@
     [cell setSelectedBackgroundView:bgColorView];
     [self.myTableView deselectRowAtIndexPath:indexPath animated:YES];
     return cell;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    lastPath = indexPath;    
 }
 
 # pragma mark - Prepare Data for Segue

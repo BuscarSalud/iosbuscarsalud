@@ -7,10 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "GADBannerView.h"
 
 @interface SpecialtiesViewController : UIViewController <UITableViewDelegate, UITableViewDataSource>{
     double lat;
     double lon;
+    GADBannerView *bannerView_;
 }
 
 - (IBAction)goBack:(id)sender;

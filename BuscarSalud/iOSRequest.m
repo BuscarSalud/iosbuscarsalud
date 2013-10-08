@@ -91,7 +91,7 @@
 
 }
 
-+(void)getTermsOfUse: onCompletion:(RequestTermsCompletionHandler)complete
++(void)getTermsOfUse:(RequestTermsCompletionHandler)complete
 {
     NSString *path = @"http://ws.buscarsalud.com/get_terms_of_use.php";
     [iOSRequest requestToPath:path onCompletion:^(NSString *result, NSError *error){

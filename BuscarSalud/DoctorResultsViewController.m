@@ -19,6 +19,7 @@
 @interface DoctorResultsViewController (){
     NSIndexPath *prevPathSpec;
     NSIndexPath *prevPathBack;
+    NSIndexPath *tableIndexPath;
     NSString *specTableSelectedValue;
     NSString *backTableSelectedValue;
     NSString *specLabelCellString;
@@ -26,12 +27,18 @@
     NSString *stateSafeName;
     NSString *selectedStateName;
     NSString *selectedStateTid;
+    NSString *selectedSpecialtyTid;
+    NSString *selectedSpecialtyName;
     NSDictionary *specialtiesDictionary;
     NSDictionary *statesDictionary;
     BOOL firstHitOnState;
     BOOL selectedBeforeState;
     BOOL firstHitOnSpec;
     int sortingOptionNum;
+    int stateOrSpec;
+    NSArray *options;
+    NSArray *statesFake;
+    
     
 }
 #define VIEW_HIDDEN 230
@@ -41,7 +48,7 @@
 @end
 
 @implementation DoctorResultsViewController
-@synthesize latitudeUser, longitudeUser, specialtyString, myTableView, myNavigation, subTitleLabel, subtitleString, layerPosition, mapButton, backButton, topNavBar, stat, specialities, searchButton, sortingControl, displayLabel, statesDictionary, picker,pickerViewContainer;
+@synthesize latitudeUser, longitudeUser, specialtyString, myTableView, myNavigation, subTitleLabel, subtitleString, layerPosition, mapButton, backButton, topNavBar, stat, specialities, searchButton, sortingControl, displayLabel, statesDictionary, picker,pickerViewContainer, optionsTable, optionLabelInPickerView, pickerStates, silderImageView, mainView;
 
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -56,8 +63,61 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    // Create a view of the standard size at the top of the screen.
+    // Available AdSize constants are explained in GADAdSize.h.
+    bannerView_ = [[GADBannerView alloc] initWithFrame:CGRectMake(0.0,
+                                                                  361.0,
+                                                                  GAD_SIZE_320x50.width,
+                                                                  GAD_SIZE_320x50.height)];
+    
+    bannerView_.translatesAutoresizingMaskIntoConstraints=NO;
+    
+    
+    // Specify the ad's "unit identifier". This is your AdMob Publisher ID.
+    bannerView_.adUnitID = @"ca-app-pub-5383770617488734/3234786808";
+    
+    // Let the runtime know which UIViewController to restore after taking
+    // the user wherever the ad goes and add it to the view hierarchy.
+    bannerView_.rootViewController = self;
+    [self.mainView addSubview:bannerView_];
+    
+     // Constraint keeps ad at the bottom of the screen at all times.
+     [self.view addConstraint:
+     [NSLayoutConstraint constraintWithItem:bannerView_
+     attribute:NSLayoutAttributeBottom
+     relatedBy:NSLayoutRelationEqual
+     toItem:self.view
+     attribute:NSLayoutAttributeBottom
+     multiplier:1.0
+     constant:0]];
+     
+     // Constraint keeps ad in the center of the screen at all times.
+     [self.view addConstraint:
+     [NSLayoutConstraint constraintWithItem:bannerView_
+     attribute:NSLayoutAttributeCenterX
+     relatedBy:NSLayoutRelationEqual
+     toItem:self.view
+     attribute:NSLayoutAttributeCenterX
+     multiplier:1.0
+     constant:0]];
+     
+    GADRequest *request = [GADRequest request];
+    
+    // Make the request for a test ad. Put in an identifier for
+    // the simulator as well as any devices you want to receive test ads.
+    request.testDevices = [NSArray arrayWithObjects:
+                           @"045BB3DE-3CF2-5B56-94AF-85CFDA9C7D1E",
+                           nil];
+    
+    // Initiate a generic request to load it with an ad.
+    [bannerView_ loadRequest:request];
+    
     //[[self tableViewBack]setDelegate:self];
     //[[self tableViewBack]setDataSource:self];
+    [[self optionsTable] setDelegate:self];
+    [[self optionsTable] setDataSource:self];
+    [[self optionsTable] reloadData];
     UIFont *sourceSansProSemibold = [UIFont fontWithName:@"SourceSansPro-Semibold" size:18];
     [displayLabel setFont:sourceSansProSemibold ];
     subTitleLabel.hidden = YES;
@@ -113,6 +173,11 @@
     
     stat = [NSArray arrayWithObjects:s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13, s14, s15, s16, s17, s18, s19, s20, s21, s22, s23, s24, s25, s26, s27, s28, s29, s30, s31, s32, s33, nil];
     */
+    selectedSpecialtyTid = specialtyString;
+    selectedSpecialtyName = subtitleString;
+    selectedStateName = @"";
+    statesFake = [NSArray arrayWithObjects:@"Especialidad:",@"Estado:", nil];
+    options = [NSArray arrayWithObjects:@"Especialidad:",@"Estado:", nil];
     
     NSDictionary *stateInDictionary = [[NSDictionary alloc]init];
     stat = [[NSMutableArray alloc]init];
@@ -315,13 +380,11 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    //if (tableView == myTableView) {
+    if (tableView == myTableView) {
         return _user.count;
-    /*} else if (tableView == tableViewBack) {
-        return [stat count]-1;
-    }else{
-        return [specialities count];
-    }*/
+    } else{
+        return [options count];
+    }
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -406,6 +469,18 @@
         
 
     }
+    if (tableView == optionsTable) {
+        UIFont *sourceSansProSemibold = [UIFont fontWithName:@"SourceSansPro-Semibold" size:14];
+        UIFont *sourceSansProSemiboldSmall = [UIFont fontWithName:@"SourceSansPro-Semibold" size:13];
+        NSString *optionString = [options objectAtIndex:indexPath.row];
+        UILabel *optionsStringLabel = (UILabel *)[cell viewWithTag:101];
+        UILabel *selectedOptionLabel = (UILabel *)[cell viewWithTag:102];
+        
+        optionsStringLabel.text = optionString;
+        [optionsStringLabel setFont:sourceSansProSemibold];
+        [selectedOptionLabel setFont:sourceSansProSemiboldSmall];
+        [cell setSelectedBackgroundView:bgColorView];
+    }
     /*
     if (tableView == tableViewBack) {
         States *estados = [stat objectAtIndex:indexPath.row];
@@ -446,10 +521,43 @@
     
     return background;
 }
-/*
+
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (tableView == tableViewSpec) {
+    if (tableView == optionsTable) {
+        if (indexPath.row == 0) {
+            
+            NSLog(@"Especialidad selected");
+            stateOrSpec = 0;
+            optionLabelInPickerView.text = @"Especialidades";
+            [UIView animateWithDuration:0.3 animations:^{
+                [UIView setAnimationBeginsFromCurrentState:YES];
+                pickerViewContainer.frame = CGRectMake(0, 151, 320, 260);
+                //scroller.frame = CGRectMake(0, -138, scroller.frame.size.width, scroller.frame.size.height);
+            }];
+            pickerStates.hidden = YES;
+            picker.hidden = NO;
+            [picker reloadAllComponents];
+        }else{
+            
+            NSLog(@"Estado selected");
+            stateOrSpec = 1;
+            optionLabelInPickerView.text = @"Estados";
+            [UIView animateWithDuration:0.3 animations:^{
+                [UIView setAnimationBeginsFromCurrentState:YES];
+                pickerViewContainer.frame = CGRectMake(0, 151, 320, 260);
+                //scroller.frame = CGRectMake(0, -138, scroller.frame.size.width, scroller.frame.size.height);
+            }];
+            NSLog(@"StateOrState = %d", stateOrSpec);
+            NSLog(@"States after click cell = %@", stat);
+            picker.hidden = YES;
+            pickerStates.hidden = NO;
+            [pickerStates reloadAllComponents];
+            specLabelCellString = selectedSpecialtyName;
+        }
+        [optionsTable deselectRowAtIndexPath:indexPath animated:YES];
+    }
+/*    if (tableView == tableViewSpec) {
         UITableViewCell *cellSpec = [tableViewSpec cellForRowAtIndexPath:indexPath];
         NSLog(@"Row selected: %d", indexPath.row);
         for (UIView *view in cellSpec.contentView.subviews) {
@@ -528,28 +636,46 @@
         NSLog(@"Valor de state: %@", backTableSelectedValue);
         NSLog(@"Valor de spec: %@", specTableSelectedValue);
 
-    }
-}*/
+    }*/
+}
 
 -(NSInteger) numberOfComponentsInPickerView:(UIPickerView *)pickerView{
     return 1;
 }
 
 -(NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component{
-    return [stat count];
+    if (pickerView == picker) {
+        return [specialities count];
+    }else{
+        return [stat count];
+    }
+    
 }
 
 -(NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component{
-    States *estados = [stat objectAtIndex:row];
-    return estados.display;
+    if (pickerView == pickerStates) {
+        States *estados = [stat objectAtIndex:row];
+        NSLog(@"Estados! value of stat = %@ and row = %d", stat, row);
+        return estados.display;
+    }else{
+        Specialty *especialidades = [specialities objectAtIndex:row];
+        return especialidades.display;
+    }
 }
 
 -(void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component{
-    States *estados = [stat objectAtIndex:row];
-    selectedStateName = estados.display;
-    selectedStateTid = estados.name;
-    
-    NSLog(@"Selected state %@", estados.name);
+    if (pickerView == pickerStates) {
+        States *estados = [stat objectAtIndex:row];
+        selectedStateName = estados.display;
+        selectedStateTid = estados.name;
+        
+        NSLog(@"Selected state %@ = %@", selectedStateTid, selectedStateName);
+    }else{
+        Specialty *especialidades = [specialities objectAtIndex:row];
+        selectedSpecialtyName = especialidades.display;
+        selectedSpecialtyTid = especialidades.name;
+        NSLog(@"Selected specialty %@ = %@", selectedSpecialtyTid, selectedSpecialtyName);
+    }
 }
 
 
@@ -594,7 +720,8 @@
                              int arrayPath;
                              int a = 0;
                              int arrayPathStates;
-                             
+                             silderImageView.image = [UIImage imageNamed:@"slide-sign-close.png"];
+                             silderImageView.frame = CGRectMake(-3, 188, 9, 130);
                              NSLog(@"%d", finished);
                              
                              for (Specialty *specArray in specialities){
@@ -620,6 +747,8 @@
                              backButton.enabled = YES;
                              //[sortingControl setSelectedSegmentIndex:sortingOptionNum];
                              self.myTableView.userInteractionEnabled = YES;
+                             silderImageView.image = [UIImage imageNamed:@"slide-sign.png"];
+                             silderImageView.frame = CGRectMake(-1, 188, 9, 130);
                          }
                      }];
 }
@@ -713,11 +842,12 @@
 
 #pragma mark - Search button actions
 - (IBAction)searchButton:(id)sender {
-    /*
-    NSLog(@"*******************");
-    NSLog(@"Especialidad a mandar: %@", specTableSelectedValue);
-    NSLog(@"Estado a mandar: %@", backTableSelectedValue);
     
+    NSLog(@"*******************");
+    NSLog(@"Especialidad a mandar: %@ = %@", selectedSpecialtyName, selectedSpecialtyTid);
+    NSLog(@"Estado a mandar: %@ = %@", selectedStateName, selectedStateTid);
+    
+    /*
     [UIView beginAnimations:nil context:nil];
     [myTableView setAlpha:1.0];
     [myTableView setAlpha:0.0];
@@ -740,24 +870,22 @@
             }
         }
         sortingOptionNum = 1;
-    }
+    }*/
     
-    [self getLocations:[latitudeUser stringValue] andLongitude:[longitudeUser stringValue] andSpecialty:specialtySafeName andState:stateSafeName andOrder:@""];
+    [self getLocations:[latitudeUser stringValue] andLongitude:[longitudeUser stringValue] andSpecialty:selectedSpecialtyTid andState:selectedStateTid andOrder:@""];
     
     subTitleLabel.text = specLabelCellString;
-    if ([stateSafeName isEqualToString:@""]) {
-        displayLabel.text = specLabelCellString;
+    if ([selectedStateName isEqualToString:@""] || [selectedStateName isKindOfClass:[NSNull class]]) {
+        displayLabel.text = selectedSpecialtyName;
     }else{
-        displayLabel.text = [NSString stringWithFormat:@"%@ en %@", specLabelCellString, backTableSelectedValue];
+        displayLabel.text = [NSString stringWithFormat:@"%@ en %@", selectedSpecialtyName, selectedStateName];
     }
     
     [self animateLayerToPoint:0];
-    */
-    [UIView animateWithDuration:0.3 animations:^{
-        [UIView setAnimationBeginsFromCurrentState:YES];
-        pickerViewContainer.frame = CGRectMake(0, 151, 320, 260);
-        //scroller.frame = CGRectMake(0, -138, scroller.frame.size.width, scroller.frame.size.height);
-    }];
+    [myTableView setAlpha:1.0];
+    [UIView beginAnimations:nil context:nil];
+    [myTableView setAlpha:0.0];
+    [UIView commitAnimations];
 }
 
 #pragma mark - Sorting Options segment buttons
@@ -768,11 +896,11 @@
         [myTableView setAlpha:0.0];
         [UIView commitAnimations];
 
-        [self getLocations:[latitudeUser stringValue] andLongitude:[longitudeUser stringValue] andSpecialty:specialtySafeName andState:@"" andOrder:@"distancia"];
-        if ([specTableSelectedValue isEqualToString:@""]) {
+        [self getLocations:[latitudeUser stringValue] andLongitude:[longitudeUser stringValue] andSpecialty:selectedSpecialtyTid andState:@"" andOrder:@"distancia"];
+        if ([selectedSpecialtyName isEqualToString:@""]) {
             displayLabel.text = subtitleString;
         }else{
-            displayLabel.text = specTableSelectedValue;
+            displayLabel.text = selectedSpecialtyName;
         }
     }
     if ([sortingControl selectedSegmentIndex] == 1) {
@@ -781,7 +909,7 @@
         [myTableView setAlpha:0.0];
         [UIView commitAnimations];
 
-        [self getLocations:[latitudeUser stringValue] andLongitude:[longitudeUser stringValue] andSpecialty:specialtySafeName andState:stateSafeName andOrder:@"puntos"];
+        [self getLocations:[latitudeUser stringValue] andLongitude:[longitudeUser stringValue] andSpecialty:selectedSpecialtyTid andState:selectedStateTid andOrder:@"puntos"];
     }
     if ([sortingControl selectedSegmentIndex] == 2) {
         [UIView beginAnimations:nil context:nil];
@@ -794,6 +922,79 @@
 }
 
 - (IBAction)selectItem:(id)sender {
+    if (stateOrSpec == 0) {
+        NSMutableDictionary *postParams = [[NSMutableDictionary alloc]init];
+        NSLog(@"Post a mandar: especialidad=%@", selectedSpecialtyTid);
+        [postParams setValue:selectedSpecialtyTid forKey:@"especialidad"];
+        
+        [ApplicationDelegate.infoEngine getInfo:postParams completionHandler:^(NSDictionary *categories){
+            NSLog(@"Aqui no crashea");
+            statesDictionary = categories;
+            [stat removeAllObjects];
+                
+            NSDictionary *stateInDictionary = [[NSDictionary alloc]init];
+            //stat = [[NSMutableArray alloc]init];
+            
+            for (int i =0; i<[statesDictionary count]; i++) {
+                NSString *index = [NSString stringWithFormat:@"estado%d",i];
+                stateInDictionary = [statesDictionary objectForKey:index];
+                States *stateItem = [States new];
+                stateItem.display = [stateInDictionary objectForKey:@"nombre"];
+                stateItem.name = [NSString stringWithFormat:@"%@", [stateInDictionary objectForKey:@"tid"]];;
+                [stat addObject:stateItem];
+            }
+            
+            NSLog(@"Stat array %@", stat);
+            NSLog(@"Count statesDictionary = %d", [statesDictionary count]);
+            [UIView animateWithDuration:0.3 animations:^{
+                pickerViewContainer.frame = CGRectMake(0, 460, 320, 260);
+            }];            
+        } errorHandler:^(NSError* error){
+        }];
+        tableIndexPath = [NSIndexPath indexPathForRow:stateOrSpec inSection:0];
+        UITableViewCell *cellSpec = [optionsTable cellForRowAtIndexPath:tableIndexPath];
+        UILabel *selectedOptionLabel = (UILabel *)[cellSpec viewWithTag:102];
+        selectedOptionLabel.text = selectedSpecialtyName;
+        [pickerStates selectRow:0 inComponent:0 animated:YES];
+        [pickerStates reloadAllComponents];
+        stateSafeName = selectedStateTid;
+    }
+    if (stateOrSpec == 1) {
+        NSMutableDictionary *postParams = [[NSMutableDictionary alloc]init];
+        NSLog(@"Post a mandar: especialidad=%@", selectedSpecialtyTid);
+        [postParams setValue:selectedStateTid forKey:@"estado"];
+        
+        [ApplicationDelegate.infoEngine getInfo:postParams completionHandler:^(NSDictionary *categories){
+            
+            specialtiesDictionary = categories;
+            [specialities removeAllObjects];
+            
+            NSDictionary *specialtyInDictionary = [[NSDictionary alloc]init];
+            specialities = [[NSMutableArray alloc]init];
+            
+            for (int i =1; i<=[specialtiesDictionary count]; i++) {
+                NSString *index = [NSString stringWithFormat:@"especialidad%d",i];
+                specialtyInDictionary = [specialtiesDictionary objectForKey:index];
+                Specialty *specialtyItem = [Specialty new];
+                specialtyItem.display = [specialtyInDictionary objectForKey:@"nombre"];
+                specialtyItem.name = [specialtyInDictionary objectForKey:@"tid"];
+                [specialities addObject:specialtyItem];
+            }
+            [UIView animateWithDuration:0.3 animations:^{
+                pickerViewContainer.frame = CGRectMake(0, 460, 320, 260);
+            }];
+        } errorHandler:^(NSError* error){
+        }];
+        tableIndexPath = [NSIndexPath indexPathForRow:stateOrSpec inSection:0];
+        UITableViewCell *cellSpec = [optionsTable cellForRowAtIndexPath:tableIndexPath];
+        UILabel *selectedOptionLabel = (UILabel *)[cellSpec viewWithTag:102];
+        selectedOptionLabel.text = selectedStateName;
+        [picker selectRow:0 inComponent:0 animated:YES];
+        [picker reloadAllComponents];
+        NSLog(@"Aqui no crashea - States");
+        specialtySafeName = selectedSpecialtyTid;
+    }
+    
 }
 
 - (IBAction)cancelPicker:(id)sender {
@@ -803,11 +1004,24 @@
 }
 // 
 
-/*
+
 #pragma mark - Function Get Specialties and States
 -(void)getSpecialtiesStates:(NSString *)spec andState:(NSString *)state{
+    if (![spec isEqualToString:@""]) {
+        NSMutableDictionary *postParams = [[NSMutableDictionary alloc]init];
+        [postParams setValue:@"especialidad" forKey:@"todos"];
+        
+        [ApplicationDelegate.infoEngine getInfo:postParams completionHandler:^(NSDictionary *categories){
+            //states = categories;
+        } errorHandler:^(NSError* error){
+        }];
+    }
     
-    if ([state isEqualToString:@""]) {
+    
+    
+    
+    
+/*    if ([state isEqualToString:@""]) {
         NSLog(@"Specialty selected");
         for (Specialty *specialtySelectedReadyToSend in specialities) {
             if ([specialtySelectedReadyToSend.display isEqualToString:spec]) {
@@ -867,9 +1081,9 @@
                 specialtiesDictionary = specialtiesOrStates;
             });
         }];
-    }
+    }*/
 }
-*/
+
 
 
 

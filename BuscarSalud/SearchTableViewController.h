@@ -11,8 +11,9 @@
 #import "Specialty.h"
 #import "fileUploadEngine.h"
 #import "getInfoEngine.h"
+#import "GAITrackedViewController.h"
 
-@interface SearchTableViewController : UITableViewController <UITableViewDelegate, CLLocationManagerDelegate> {
+@interface SearchTableViewController : UITableViewController  <UITableViewDelegate, CLLocationManagerDelegate> {
 
 }
 

@@ -26,7 +26,7 @@ typedef void(^RequestTermsCompletionHandler)(NSString*);
 +(void)getDoctor: (NSString *)nid
        onCompletion: (RequestDictionaryCompletionHandler)complete;
 
-+(void)getTermsOfUse:onCompletion:(RequestTermsCompletionHandler)complete;
++(void)getTermsOfUse:(RequestTermsCompletionHandler)complete;
 
 +(void)getSpecialtiesAndStates:(NSString *)specialty andState:(NSString *)state andAll:(NSString *)all onCompletion:(RequestDictionaryCompletionHandler)complete;
 

@@ -28,7 +28,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://ws.buscarsalud.local/get_terms_of_use.php"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://ws.buscarsalud.com/get_terms_of_use.php"]]];
 }
 
 - (void)didReceiveMemoryWarning

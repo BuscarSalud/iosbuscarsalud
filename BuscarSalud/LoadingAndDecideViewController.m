@@ -93,6 +93,7 @@
             [defaults setObject:@"1" forKey:@"profileClaimedAlert"];
             [defaults synchronize];            
             [self performSegueWithIdentifier:@"toProfile" sender:self];
+            self.tabBarItem.title = @"Mi Perfil";
         }
 
     } errorHandler:^(NSError* error){
