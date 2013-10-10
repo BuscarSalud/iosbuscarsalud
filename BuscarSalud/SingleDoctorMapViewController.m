@@ -9,6 +9,10 @@
 #import "SingleDoctorMapViewController.h"
 #import <MapKit/MapKit.h>
 #import "Annotation.h"
+#import "GAIDictionaryBuilder.h"
+#import "GAIFields.h"
+#import "GAITrackedViewController.h"
+#import "GAI.h"
 
 @interface SingleDoctorMapViewController ()
 
@@ -52,9 +56,23 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (IBAction)backButton:(id)sender {
-    [self dismissViewControllerAnimated:YES completion:nil];
+-(void)viewDidAppear:(BOOL)animated
+{
+    // returns the same tracker you created in your app delegate
+    // defaultTracker originally declared in AppDelegate.m
+    id tracker = [[GAI sharedInstance] defaultTracker];
+    
+    // This screen name value will remain set on the tracker and sent with
+    // hits until it is set to a new value or to nil.
+    [tracker set:kGAIScreenName value:@"Map Single Doctor Screen"];
+    
+    // manual screen tracking
+    [tracker send:[[GAIDictionaryBuilder createAppView] build]];
 
+}
+
+- (IBAction)backButton:(id)sender {
+    [self dismissViewControllerAnimated:YES completion:nil]; 
 }
 
 

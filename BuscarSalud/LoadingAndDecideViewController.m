@@ -11,6 +11,10 @@
 #import "ProfileInRequestViewController.h"
 #import "NSString+MD5.h"
 #import "AppDelegate.h"
+#import "GAIDictionaryBuilder.h"
+#import "GAIFields.h"
+#import "GAITrackedViewController.h"
+#import "GAI.h"
 
 @interface LoadingAndDecideViewController (){
     NSString *loginSuccess;
@@ -37,6 +41,21 @@
 	// Do any additional setup after loading the view.
     NSLog(@"Request Object -> %@", requestObject);
     NSLog(@"Pass Flag en LoadingAndDecide -> %@", passFlag);
+}
+
+-(void)viewDidAppear:(BOOL)animated
+{
+    // returns the same tracker you created in your app delegate
+    // defaultTracker originally declared in AppDelegate.m
+    id tracker = [[GAI sharedInstance] defaultTracker];
+    
+    // This screen name value will remain set on the tracker and sent with
+    // hits until it is set to a new value or to nil.
+    [tracker set:kGAIScreenName value:@"Login Screen"];
+    
+    // manual screen tracking
+    [tracker send:[[GAIDictionaryBuilder createAppView] build]];
+
 }
 
 - (void)didReceiveMemoryWarning

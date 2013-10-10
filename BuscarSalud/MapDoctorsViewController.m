@@ -10,6 +10,10 @@
 #import <MapKit/MapKit.h>
 #import "Annotation.h"
 #import "ProfileViewController.h"
+#import "GAIDictionaryBuilder.h"
+#import "GAIFields.h"
+#import "GAITrackedViewController.h"
+#import "GAI.h"
 
 @interface MapDoctorsViewController ()
 
@@ -45,6 +49,21 @@
     
     [locationManager startUpdatingLocation];
     
+}
+
+-(void)viewDidAppear:(BOOL)animated
+{
+    // returns the same tracker you created in your app delegate
+    // defaultTracker originally declared in AppDelegate.m
+    id tracker = [[GAI sharedInstance] defaultTracker];
+    
+    // This screen name value will remain set on the tracker and sent with
+    // hits until it is set to a new value or to nil.
+    [tracker set:kGAIScreenName value:@"Map Doctors Screen"];
+    
+    // manual screen tracking
+    [tracker send:[[GAIDictionaryBuilder createAppView] build]];
+
 }
 
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error

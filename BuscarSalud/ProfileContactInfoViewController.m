@@ -11,6 +11,10 @@
 #import "AppDelegate.h"
 #import "Specialty.h"
 #import "States.h"
+#import "GAIDictionaryBuilder.h"
+#import "GAIFields.h"
+#import "GAITrackedViewController.h"
+#import "GAI.h"
 
 
 @interface ProfileContactInfoViewController ()
@@ -96,6 +100,17 @@
 
 -(void)viewDidAppear:(BOOL)animated
 {
+    // returns the same tracker you created in your app delegate
+    // defaultTracker originally declared in AppDelegate.m
+    id tracker = [[GAI sharedInstance] defaultTracker];
+    
+    // This screen name value will remain set on the tracker and sent with
+    // hits until it is set to a new value or to nil.
+    [tracker set:kGAIScreenName value:@"Claim Profile - Contact Info Screen"];
+    
+    // manual screen tracking
+    [tracker send:[[GAIDictionaryBuilder createAppView] build]];
+
     [scroller setScrollEnabled:YES];
     [scroller setContentSize:CGSizeMake(320, 450)];
 }

@@ -15,6 +15,10 @@
 #import "Specialty.h"
 #import <SDWebImage/UIImageView+WebCache.h>
 #import <QuartzCore/QuartzCore.h>
+#import "GAIDictionaryBuilder.h"
+#import "GAIFields.h"
+#import "GAITrackedViewController.h"
+#import "GAI.h"
 
 @interface DoctorResultsViewController (){
     NSIndexPath *prevPathSpec;
@@ -192,6 +196,19 @@
     }
 }
 
+-(void)viewDidAppear:(BOOL)animated
+{
+    // returns the same tracker you created in your app delegate
+    // defaultTracker originally declared in AppDelegate.m
+    id tracker = [[GAI sharedInstance] defaultTracker];
+    
+    // This screen name value will remain set on the tracker and sent with
+    // hits until it is set to a new value or to nil.
+    [tracker set:kGAIScreenName value:@"Doctor Results Screen"];
+    
+    // manual screen tracking
+    [tracker send:[[GAIDictionaryBuilder createAppView] build]];
+}
 
 
 - (void)didReceiveMemoryWarning

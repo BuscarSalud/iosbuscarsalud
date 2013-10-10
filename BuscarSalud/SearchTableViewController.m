@@ -18,12 +18,9 @@
 
 @interface SearchTableViewController (){
     NSDictionary *specialties;
-
 }
 
 @end
-
-
 
 @implementation SearchTableViewController{
     CLLocationManager *locationManager;

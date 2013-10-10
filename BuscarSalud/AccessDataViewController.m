@@ -9,6 +9,10 @@
 #import "AccessDataViewController.h"
 #import "AppDelegate.h"
 #import "NSString+MD5.h"
+#import "GAIDictionaryBuilder.h"
+#import "GAIFields.h"
+#import "GAITrackedViewController.h"
+#import "GAI.h"
 
 @interface AccessDataViewController ()
 {
@@ -77,6 +81,21 @@
     yesNoLabel.hidden = YES;
     cedulaBool = NO;
     galeriaBool = NO;
+}
+
+-(void)viewDidAppear:(BOOL)animated
+{
+    // returns the same tracker you created in your app delegate
+    // defaultTracker originally declared in AppDelegate.m
+    id tracker = [[GAI sharedInstance] defaultTracker];
+    
+    // This screen name value will remain set on the tracker and sent with
+    // hits until it is set to a new value or to nil.
+    [tracker set:kGAIScreenName value:@"Claim Profile - Access Data Screen"];
+    
+    // manual screen tracking
+    [tracker send:[[GAIDictionaryBuilder createAppView] build]];
+
 }
 
 - (void)didReceiveMemoryWarning
