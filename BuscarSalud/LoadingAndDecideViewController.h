@@ -20,6 +20,7 @@
 @property (nonatomic, strong) NSString *uuid;
 @property (weak, nonatomic) IBOutlet UITextField *usernameEmailField;
 @property (weak, nonatomic) IBOutlet UITextField *passwordField;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *menuSlideButton;
 
 
 - (IBAction)loginButton:(id)sender;

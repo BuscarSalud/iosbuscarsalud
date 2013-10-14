@@ -7,12 +7,15 @@
 //
 
 #import "InformationViewController.h"
+#import "SWRevealViewController.h"
 
 @interface InformationViewController ()
 
 @end
 
 @implementation InformationViewController
+
+@synthesize sidebarButton;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -28,6 +31,13 @@
     [super viewDidLoad];
     UIImage *navBackgroundImage = [UIImage imageNamed:@"navbar-background"];
     [self.navigationController.navigationBar setBackgroundImage:navBackgroundImage forBarMetrics:UIBarMetricsDefault];
+    
+    // Set the side bar button action. When it's tapped, it'll show up the sidebar.
+    sidebarButton.target = self.revealViewController;
+    sidebarButton.action = @selector(revealToggle:);
+    
+    // Set the gesture
+    [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
 }
 
 - (void)didReceiveMemoryWarning

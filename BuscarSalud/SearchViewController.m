@@ -1,12 +1,12 @@
 //
-//  SearchTableViewController.m
+//  SearchViewController.m
 //  BuscarSalud
 //
-//  Created by FELIX OLIVARES on 2/19/13.
+//  Created by FELIX OLIVARES on 10/9/13.
 //  Copyright (c) 2013 FELIX OLIVARES. All rights reserved.
 //
 
-#import "SearchTableViewController.h"
+#import "SearchViewController.h"
 #import "SpecialtiesViewController.h"
 #import "iOSRequest.h"
 #import "NSString+WebService.h"
@@ -17,24 +17,27 @@
 #import "GAI.h"
 #import "SWRevealViewController.h"
 
-
-@interface SearchTableViewController (){
-    NSDictionary *specialties;
+@interface SearchViewController ()
+{
+    NSDictionary *specialties;    
 }
+
+#define IS_WIDESCREEN ( [ [ UIScreen mainScreen ] bounds ].size.height == 568 )
 
 @end
 
-@implementation SearchTableViewController{
+
+@implementation SearchViewController{
     CLLocationManager *locationManager;
     double lat;
     double lon;
 }
 
-@synthesize searchTable, specialtyNameLabel, receiveDisplay, receiveName, tabBarController, latitude, longitude, categoriesUploadEngine, flOperation;
+@synthesize specialtyNameLabel, receiveDisplay, receiveName, tabBarController, latitude, longitude, sidebarButton;
 
-- (id)initWithStyle:(UITableViewStyle)style
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
-    self = [super initWithStyle:style];
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         // Custom initialization
     }
@@ -44,8 +47,26 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    
+    if (IS_WIDESCREEN) {
+        self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-five.png"]];
+    }else{
+        self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main.png"]];
+    }
+    
 
+
+    
+    // Set the side bar button action. When it's tapped, it'll show up the sidebar.
+    [sidebarButton addTarget:self.revealViewController action:@selector(revealToggle:) forControlEvents:UIControlEventTouchUpInside];
+    
+    // Set the gesture
+    [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
+
+
+    
+	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    
     NSLog(@"tt0001m_: %@",
           [UIFont fontNamesForFamilyName:@"Source Sans Pro"]
           );
@@ -54,48 +75,22 @@
     // Get location
     locationManager = [[CLLocationManager alloc] init];
     locationManager.delegate = self;
-    locationManager.desiredAccuracy = kCLLocationAccuracyBest;    
+    locationManager.desiredAccuracy = kCLLocationAccuracyBest;
     [locationManager startUpdatingLocation];
     
-    [searchTable setBackgroundView:[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"background-main.png"]]];
-    specialtyNameLabel.text = @"Tap para seleccionar una especialidad";
-    
-    UIView *backgroundSelectedCell = [[UIView alloc] init];
-    [backgroundSelectedCell setBackgroundColor:[UIColor colorWithRed:(68/255.0) green:(110/255.0) blue:(32/255.0) alpha:1]];
-    
-    for (int section = 0; section < [self.tableView numberOfSections]; section++)
-        for (int row = 0; row < [self.tableView numberOfRowsInSection:section]; row++)
-        {
-            NSIndexPath* cellPath = [NSIndexPath indexPathForRow:row inSection:section];
-            UITableViewCell* cell = [self.tableView cellForRowAtIndexPath:cellPath];
-            
-            [cell setSelectedBackgroundView:backgroundSelectedCell];
-            
-            if (cellPath.row == 0){
-                UIImage *image = [UIImage imageNamed:@"medical.png"]; //or wherever you take your image from
-                UIImageView *imageView = [[UIImageView alloc] initWithImage:image];
-                cell.accessoryView = imageView;
-            }
-        }
-    
+        
     NSLog(@"specialties in didload = %@", specialties);
 
-   // NSLog(@"%@", specialties);
+}
+
+- (void)didReceiveMemoryWarning
+{
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
 }
 
 -(void)viewDidAppear:(BOOL)animated
 {
-    /*
-    NSMutableDictionary *postParams = [[NSMutableDictionary alloc]init];
-    [postParams setValue:@"especialidad" forKey:@"todos"];
-
-    [ApplicationDelegate.infoEngine getInfo:postParams completionHandler:^(NSDictionary *categories){
-        specialties = categories;
-        NSLog(@"specialties in didAppear = %@", specialties);
-    } errorHandler:^(NSError* error){
-    }];
-    */
-    
     [super viewWillAppear:animated];
     
     // returns the same tracker you created in your app delegate
@@ -109,22 +104,6 @@
     // manual screen tracking
     [tracker send:[[GAIDictionaryBuilder createAppView] build]];
 }
-
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-}
-
-
-
-
-#pragma mark - Table view data source
-
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    [tableView deselectRowAtIndexPath:indexPath animated:YES];
-}
-
 
 #pragma mark - Get Current Location
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error
@@ -149,24 +128,25 @@
     latitude = [NSNumber numberWithDouble:lat];
     longitude = [NSNumber numberWithDouble:lon];
     
-
+    
 }
 
 # pragma mark - Prepare Data for Segue
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-
+    
     if ([segue.identifier isEqualToString:@"goToSpecialties"]) {
         SpecialtiesViewController *destViewController = segue.destinationViewController;
         destViewController.latitudeSpec = latitude;
         destViewController.longitudeSpec = longitude;
         //destViewController.specialtiesDictionary = specialties;
         
-        NSIndexPath *indexPath = [self.searchTable indexPathForSelectedRow];
-        [searchTable deselectRowAtIndexPath:indexPath animated:YES];
-         NSLog(@"specialties in segue = %@", specialties);
+        NSLog(@"specialties in segue = %@", specialties);
     }
 }
 
 
+- (IBAction)sidebarButton:(id)sender {
+
+}
 @end

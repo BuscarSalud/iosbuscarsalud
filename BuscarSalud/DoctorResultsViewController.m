@@ -40,8 +40,11 @@
     BOOL firstHitOnSpec;
     int sortingOptionNum;
     int stateOrSpec;
+    int lastIndexPathRow;
+    int pageNumber;
     NSArray *options;
     NSArray *statesFake;
+    BOOL nextPage;
     
     
 }
@@ -52,7 +55,7 @@
 @end
 
 @implementation DoctorResultsViewController
-@synthesize latitudeUser, longitudeUser, specialtyString, myTableView, myNavigation, subTitleLabel, subtitleString, layerPosition, mapButton, backButton, topNavBar, stat, specialities, searchButton, sortingControl, displayLabel, statesDictionary, picker,pickerViewContainer, optionsTable, optionLabelInPickerView, pickerStates, silderImageView, mainView;
+@synthesize latitudeUser, longitudeUser, specialtyString, myTableView, myNavigation, subTitleLabel, subtitleString, layerPosition, mapButton, backButton, topNavBar, stat, specialities, searchButton, sortingControl, displayLabel, statesDictionary, picker,pickerViewContainer, optionsTable, optionLabelInPickerView, pickerStates, silderImageView, mainView, loadMoreDataImage;
 
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -68,6 +71,11 @@
 {
     [super viewDidLoad];
     
+    //[self.navigationController.view addSubview:moreInfoBannerContainer];
+    
+    
+    [loadMoreDataImage setAlpha:0.0];
+    
     // Create a view of the standard size at the top of the screen.
     // Available AdSize constants are explained in GADAdSize.h.
     bannerView_ = [[GADBannerView alloc] initWithFrame:CGRectMake(0.0,
@@ -76,7 +84,7 @@
                                                                   GAD_SIZE_320x50.height)];
     
     bannerView_.translatesAutoresizingMaskIntoConstraints=NO;
-    
+    pageNumber = 1;
     
     // Specify the ad's "unit identifier". This is your AdMob Publisher ID.
     bannerView_.adUnitID = @"ca-app-pub-5383770617488734/3234786808";
@@ -110,9 +118,10 @@
     
     // Make the request for a test ad. Put in an identifier for
     // the simulator as well as any devices you want to receive test ads.
-    request.testDevices = [NSArray arrayWithObjects:
+    /*request.testDevices = [NSArray arrayWithObjects:
                            @"045BB3DE-3CF2-5B56-94AF-85CFDA9C7D1E",
-                           nil];
+                           nil];*/
+    request.testDevices = [NSArray arrayWithObjects:@"33c1dd26714bf1d45a6e583a9b626399", nil];
     
     // Initiate a generic request to load it with an ad.
     [bannerView_ loadRequest:request];
@@ -194,6 +203,10 @@
         stateItem.name = [NSString stringWithFormat:@"%@", [stateInDictionary objectForKey:@"tid"]];;
         [stat addObject:stateItem];
     }
+    nextPage = NO;
+    
+    
+    
 }
 
 -(void)viewDidAppear:(BOOL)animated
@@ -219,6 +232,7 @@
 
 - (IBAction)goBack:(id)sender {
     [self.navigationController popViewControllerAnimated:YES];
+    [MKNetworkEngine cancelOperationsContainingURLString:@"ws.buscarsalud.com"];
 }
 
 #pragma mark - Function to get Doctors
@@ -318,6 +332,13 @@
         }
     }
     
+    if (nextPage == NO) {
+        [postParams setValue:@"10" forKey:@"limite"];
+    }else{
+        NSString *pageNumberStringValue = [NSString stringWithFormat:@"%d", pageNumber];
+        [postParams setValue:@"10" forKey:@"limite"];
+        [postParams setValue:pageNumberStringValue forKey:@"pagina"];
+    }
     NSLog(@"%@", postParams);
     [ApplicationDelegate.infoEngine getDoctorsList:postParams completionHandler:^(NSDictionary *categories){
         
@@ -337,11 +358,12 @@
             
         }else self.mapButton.enabled = YES;
         
-        [myTableView setAlpha:0.0];
-        [UIView beginAnimations:nil context:nil];
-        [myTableView setAlpha:1.0];
-        [UIView commitAnimations];
-        
+        if (nextPage == NO) {
+            [myTableView setAlpha:0.0];
+            [UIView beginAnimations:nil context:nil];
+            [myTableView setAlpha:1.0];
+            [UIView commitAnimations];
+        }
         
         [self.loading stopAnimating];
         if ([categories isKindOfClass:[NSNull class]]) {
@@ -354,14 +376,42 @@
             
             [alert show];
             myTableView.hidden = YES;
+            [myTableView reloadData];
         }else{
-            if (_user != categories) {
-                _user = categories;
+            if (nextPage == YES) {
+                _userStatic = categories;
+                NSDictionary *nextPageDic = [_user mutableCopy];
+                _user = [NSMutableDictionary dictionaryWithCapacity:20];
+                [_user addEntriesFromDictionary:_userStatic];
+                [_user addEntriesFromDictionary:nextPageDic];
+                NSLog(@"Diccionario _user count: %d", [_user count]);
+                NSLog(@"New contens of _user: %@", _user);
+                [self.myTableView reloadData];
+                [myTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:lastIndexPathRow+1 inSection:0]
+                                   atScrollPosition:UITableViewScrollPositionNone
+                                           animated:YES];
+                myTableView.hidden = NO;
+                [UIView beginAnimations:nil context:nil];
+                [UIView setAnimationDuration:0.3];
+                loadMoreDataImage.frame = CGRectMake(15, 460, 290, 50);
+                [loadMoreDataImage setAlpha:0.0];
+                [UIView commitAnimations];
+                //[loadMoreDataImage setAlpha:0.0];
+            } else{
+                if (_userStatic != categories) {
+                    _userStatic = categories;
+                    _user = [_userStatic mutableCopy];
+                    NSLog(@"Diccionario _user count: %d", [_user count]);
+                    NSLog(@"Contents of _user: %@", _user);
+                    [self.myTableView reloadData];
+                    [myTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]
+                                       atScrollPosition:UITableViewScrollPositionNone
+                                               animated:NO];
+                    myTableView.hidden = NO;
+                }
             }
-            [self.myTableView reloadData];
-            [myTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]
-                               atScrollPosition:UITableViewScrollPositionNone animated:NO];
-            myTableView.hidden = NO;
+
+            
         }
     } errorHandler:^(NSError* error){
         [self.loading stopAnimating];
@@ -379,8 +429,8 @@
 
 -(void)setUser:(NSDictionary *)user
 {
-    if (_user != user) {
-        _user = user;
+    if (_userStatic != user) {
+        _userStatic = user;
     }
     NSLog(@"Especialidad : %@", specialtyString);
     NSLog(@"valor de diccionario en Doctor results: %@", user);
@@ -483,6 +533,20 @@
         
         // change background color of selected cell
         [cell setSelectedBackgroundView:bgColorView];
+    
+        if (indexPath.row > [_user count]-2 && [_user count] >= 10) {
+            nextPage = YES;
+            pageNumber++;
+            
+            [loadMoreDataImage setAlpha:1.0];
+            [UIView beginAnimations:nil context:nil];
+            [UIView setAnimationDuration:0.3];
+            loadMoreDataImage.frame = CGRectMake(15, 360, 290, 50);
+            [UIView commitAnimations];
+            
+            [self getLocations:[latitudeUser stringValue] andLongitude:[longitudeUser stringValue] andSpecialty:specialtyString andState:@"" andOrder:@""];
+            lastIndexPathRow = indexPath.row;
+        }
         
 
     }
@@ -518,6 +582,8 @@
         [cell setSelectedBackgroundView:bgColorView];
 
     }*/
+
+
 
     return cell;
 }

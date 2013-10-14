@@ -13,6 +13,7 @@
 #import "GAIFields.h"
 #import "GAITrackedViewController.h"
 #import "GAI.h"
+#import "SWRevealViewController.h"
 
 @interface ProfileInRequestViewController ()
 {
@@ -41,7 +42,7 @@
 @end
 
 @implementation ProfileInRequestViewController
-@synthesize nidReceived, phoneLabel, imageProfile, streetLabel, coloniaLabel, specialtyLabel, fromMap, subTitleLabel, stateLabel, loginSuccess, doctorInfo, phoneImageView;
+@synthesize nidReceived, phoneLabel, imageProfile, streetLabel, coloniaLabel, specialtyLabel, fromMap, subTitleLabel, stateLabel, loginSuccess, doctorInfo, phoneImageView, menuSidebarButton;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -56,6 +57,13 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
+    
+    // Set the side bar button action. When it's tapped, it'll show up the sidebar.
+    menuSidebarButton.target = self.revealViewController;
+    menuSidebarButton.action = @selector(revealToggle:);
+    
+    // Set the gesture
+    [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
     
     phoneImageView.hidden = YES;
     self.navigationItem.hidesBackButton = YES;

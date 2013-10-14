@@ -15,6 +15,8 @@
 #import "GAIFields.h"
 #import "GAITrackedViewController.h"
 #import "GAI.h"
+#import "SWRevealViewController.h"
+
 
 @interface LoadingAndDecideViewController (){
     NSString *loginSuccess;
@@ -24,7 +26,7 @@
 @end
 
 @implementation LoadingAndDecideViewController
-@synthesize uuid, requestObject, passFlag, nid, passwordField, usernameEmailField, window;
+@synthesize uuid, requestObject, passFlag, nid, passwordField, usernameEmailField, window, menuSlideButton;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -41,6 +43,15 @@
 	// Do any additional setup after loading the view.
     NSLog(@"Request Object -> %@", requestObject);
     NSLog(@"Pass Flag en LoadingAndDecide -> %@", passFlag);
+    // Set the side bar button action. When it's tapped, it'll show up the sidebar.
+    
+    // Set the side bar button action. When it's tapped, it'll show up the sidebar.
+    menuSlideButton.target = self.revealViewController;
+    menuSlideButton.action = @selector(revealToggle:);
+    
+    // Set the gesture
+    [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
+    
 }
 
 -(void)viewDidAppear:(BOOL)animated
@@ -55,6 +66,7 @@
     
     // manual screen tracking
     [tracker send:[[GAIDictionaryBuilder createAppView] build]];
+    
 
 }
 
@@ -65,7 +77,14 @@
 }
 
 -(void)viewWillAppear:(BOOL)animated{
-    if ([passFlag isEqualToString:@"1"]) {
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    requestObject = [defaults objectForKey:@"requestObject"];
+    passFlag = [defaults objectForKey:@"passFlag"];
+    nid = [defaults objectForKey:@"nid"];
+    uuid = [defaults objectForKey:@"uuid"];
+    NSString *isLogged = [defaults objectForKey:@"profileClaimedAlert"];
+    
+    if ([passFlag isEqualToString:@"1"] || [isLogged isEqualToString:@"1"]) {
         [self performSegueWithIdentifier:@"toProfile" sender:self];
     }
 }
@@ -110,6 +129,7 @@
             [defaults setObject:@"1" forKey:@"logged"];
             [defaults setObject:nid forKey:@"nid"];
             [defaults setObject:@"1" forKey:@"profileClaimedAlert"];
+            [defaults setObject:usernameEmail forKey:@"user_logged"];
             [defaults synchronize];            
             [self performSegueWithIdentifier:@"toProfile" sender:self];
             self.tabBarItem.title = @"Mi Perfil";

@@ -28,5 +28,6 @@
 @property (weak, nonatomic) IBOutlet UILabel *specialtyLabel;
 @property (weak, nonatomic) IBOutlet UILabel *stateLabel;
 @property (weak, nonatomic) IBOutlet UIImageView *phoneImageView;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *menuSidebarButton;
 
 @end

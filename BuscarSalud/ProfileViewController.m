@@ -11,11 +11,13 @@
 #import "iOSRequest.h"
 #import <SDWebImage/UIImageView+WebCache.h>
 #import <MapKit/MapKit.h>
+#import <QuartzCore/QuartzCore.h>
 #import "SingleDoctorMapViewController.h"
 #import "GAIDictionaryBuilder.h"
 #import "GAIFields.h"
 #import "GAITrackedViewController.h"
 #import "GAI.h"
+
 
 @interface ProfileViewController ()
 {
@@ -101,9 +103,10 @@
     
     // Make the request for a test ad. Put in an identifier for
     // the simulator as well as any devices you want to receive test ads.
-    request.testDevices = [NSArray arrayWithObjects:
+    /*request.testDevices = [NSArray arrayWithObjects:
                            @"045BB3DE-3CF2-5B56-94AF-85CFDA9C7D1E",
-                           nil];
+                           nil];*/
+    request.testDevices = [NSArray arrayWithObjects:@"33c1dd26714bf1d45a6e583a9b626399", nil];
     
     // Initiate a generic request to load it with an ad.
     [bannerView_ loadRequest:request];
@@ -366,6 +369,9 @@
     
     [scroller setScrollEnabled:YES];
     [scroller setContentSize:CGSizeMake(320, limit)];
+    
+    scroller.layer.borderWidth = 1;
+    scroller.layer.borderColor = [UIColor blackColor].CGColor;
     
 }
 
@@ -866,6 +872,16 @@
     [UIView commitAnimations];
     
     [scroller setContentSize:CGSizeMake(320, limit + 10)];
+}
+
+- (void)adViewDidReceiveAd:(GADBannerView *)bannerView {
+    [UIView beginAnimations:@"BannerSlide" context:nil];
+    bannerView.frame = CGRectMake(0.0,
+                                  self.view.frame.size.height -
+                                  bannerView.frame.size.height,
+                                  bannerView.frame.size.width,
+                                  bannerView.frame.size.height);
+    [UIView commitAnimations];
 }
 
 @end

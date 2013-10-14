@@ -82,10 +82,11 @@
     
     // Make the request for a test ad. Put in an identifier for
     // the simulator as well as any devices you want to receive test ads.
-    request.testDevices = [NSArray arrayWithObjects:
+    /*request.testDevices = [NSArray arrayWithObjects:
                            @"045BB3DE-3CF2-5B56-94AF-85CFDA9C7D1E",
-                           nil];
-
+                           nil];*/
+    request.testDevices = [NSArray arrayWithObjects:@"33c1dd26714bf1d45a6e583a9b626399", nil];
+    
     // Initiate a generic request to load it with an ad.
     [bannerView_ loadRequest:request];
     

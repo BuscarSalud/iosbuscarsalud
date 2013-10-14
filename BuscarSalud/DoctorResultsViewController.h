@@ -20,10 +20,12 @@
 @property(strong, nonatomic)NSNumber *latitudeUser;
 @property(strong, nonatomic)NSNumber *longitudeUser;
 @property(retain, nonatomic)NSString *specialtyString;
-@property (nonatomic, strong) NSDictionary *user;
+@property (nonatomic, strong) NSMutableDictionary *user;
+@property (nonatomic, strong) NSDictionary *userStatic;
 @property (nonatomic, strong) NSDictionary *dic;
 @property (retain, nonatomic)NSDictionary *statesDictionary;
 
+@property (weak, nonatomic) IBOutlet UIImageView *loadMoreDataImage;
 @property (weak, nonatomic) IBOutlet UILabel *subTitleLabel;
 @property(retain, nonatomic)NSString *subtitleString;
 @property (weak, nonatomic) IBOutlet UILabel *displayLabel;

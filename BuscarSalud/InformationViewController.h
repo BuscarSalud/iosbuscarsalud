@@ -11,5 +11,8 @@
 
 @interface InformationViewController : UIViewController <MFMailComposeViewControllerDelegate>
 
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *sidebarButton;
+
+
 - (IBAction)sendMail:(id)sender;
 @end
