@@ -45,10 +45,14 @@
     NSArray *options;
     NSArray *statesFake;
     BOOL nextPage;
+    BOOL requestFromSearchButton;
+    BOOL firstRequestFromSearchButton;
+    BOOL landscape;
     
     
 }
 #define VIEW_HIDDEN 230
+#define IS_WIDESCREEN ( [ [ UIScreen mainScreen ] bounds ].size.height == 568 )
 
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *loading;
 
@@ -78,10 +82,47 @@
     
     // Create a view of the standard size at the top of the screen.
     // Available AdSize constants are explained in GADAdSize.h.
-    bannerView_ = [[GADBannerView alloc] initWithFrame:CGRectMake(0.0,
-                                                                  361.0,
-                                                                  GAD_SIZE_320x50.width,
-                                                                  GAD_SIZE_320x50.height)];
+    UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
+    if (orientation == UIInterfaceOrientationLandscapeLeft) {
+        NSLog(@"Landscape left");
+        bannerView_ = [[GADBannerView alloc] initWithAdSize:kGADAdSizeSmartBannerLandscape origin:CGPointMake(0.0, 340.0)];
+        [self.view addConstraint:
+         [NSLayoutConstraint constraintWithItem:myTableView
+                                      attribute:NSLayoutAttributeBottom
+                                      relatedBy:NSLayoutRelationEqual
+                                         toItem:bannerView_
+                                      attribute:NSLayoutAttributeBottom
+                                     multiplier:1.0
+                                       constant:-37]];
+        landscape = YES;
+        NSLog(@"Landscape set to YES in didLoad");
+    } else if (orientation == UIInterfaceOrientationLandscapeRight) {
+        NSLog(@"Landscape right");
+        bannerView_ = [[GADBannerView alloc] initWithAdSize:kGADAdSizeSmartBannerLandscape origin:CGPointMake(0.0, 340.0)];
+        [self.view addConstraint:
+         [NSLayoutConstraint constraintWithItem:myTableView
+                                      attribute:NSLayoutAttributeBottom
+                                      relatedBy:NSLayoutRelationEqual
+                                         toItem:bannerView_
+                                      attribute:NSLayoutAttributeBottom
+                                     multiplier:1.0
+                                       constant:-37]];
+        landscape = YES;
+        NSLog(@"Landscape set to YES in didLoad");
+    } else if (orientation == UIInterfaceOrientationPortrait) {
+        NSLog(@"Portrait");
+        bannerView_ = [[GADBannerView alloc] initWithAdSize:kGADAdSizeSmartBannerPortrait origin:CGPointMake(0.0, 340.0)];
+        [self.view addConstraint:
+         [NSLayoutConstraint constraintWithItem:myTableView
+                                      attribute:NSLayoutAttributeBottom
+                                      relatedBy:NSLayoutRelationEqual
+                                         toItem:bannerView_
+                                      attribute:NSLayoutAttributeBottom
+                                     multiplier:1.0
+                                       constant:-55]];
+        landscape = NO;
+    }
+
     
     bannerView_.translatesAutoresizingMaskIntoConstraints=NO;
     pageNumber = 1;
@@ -125,6 +166,8 @@
     
     // Initiate a generic request to load it with an ad.
     [bannerView_ loadRequest:request];
+    
+    
     
     //[[self tableViewBack]setDelegate:self];
     //[[self tableViewBack]setDataSource:self];
@@ -209,6 +252,111 @@
     
 }
 
+-(void) willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
+    
+    if (IS_WIDESCREEN) {
+        pickerViewContainer.frame = CGRectMake(0, 700, 320, 309);
+        NSLog(@"This is a 4 inch screen");
+    }else{
+        pickerViewContainer.frame = CGRectMake(0, 460, 320, 309);
+        NSLog(@"This is a 3.5 inches screen");
+    }
+    [bannerView_ removeFromSuperview];
+    
+    if (toInterfaceOrientation == UIInterfaceOrientationLandscapeLeft) {
+        NSLog(@"Landscape left");
+        bannerView_ = [[GADBannerView alloc] initWithAdSize:kGADAdSizeSmartBannerLandscape origin:CGPointMake(0.0, 340.0)];
+    } else if (toInterfaceOrientation == UIInterfaceOrientationLandscapeRight) {
+        NSLog(@"Landscape right");
+        bannerView_ = [[GADBannerView alloc] initWithAdSize:kGADAdSizeSmartBannerLandscape origin:CGPointMake(0.0, 340.0)];
+    } else if (toInterfaceOrientation == UIInterfaceOrientationPortrait) {
+        NSLog(@"Portrait");
+        bannerView_ = [[GADBannerView alloc] initWithFrame:CGRectMake(0.0,
+                                                                      361.0,
+                                                                      GAD_SIZE_320x50.width,
+                                                                      GAD_SIZE_320x50.height)];
+    }
+    
+    
+    bannerView_.translatesAutoresizingMaskIntoConstraints=NO;
+    
+    bannerView_.adUnitID = @"ca-app-pub-5383770617488734/3234786808";
+    
+    bannerView_.rootViewController = self;
+    
+    [self.view addSubview:bannerView_];
+    
+    // Constraint keeps ad at the bottom of the screen at all times.
+    [self.view addConstraint:
+     [NSLayoutConstraint constraintWithItem:bannerView_
+                                  attribute:NSLayoutAttributeBottom
+                                  relatedBy:NSLayoutRelationEqual
+                                     toItem:self.view
+                                  attribute:NSLayoutAttributeBottom
+                                 multiplier:1.0
+                                   constant:0]];
+    
+    // Constraint keeps ad in the center of the screen at all times.
+    [self.view addConstraint:
+     [NSLayoutConstraint constraintWithItem:bannerView_
+                                  attribute:NSLayoutAttributeCenterX
+                                  relatedBy:NSLayoutRelationEqual
+                                     toItem:self.view
+                                  attribute:NSLayoutAttributeCenterX
+                                 multiplier:1.0
+                                   constant:0]];
+    
+    GADRequest *request = [GADRequest request];
+    
+    // Make the request for a test ad. Put in an identifier for
+    // the simulator as well as any devices you want to receive test ads.
+    /*request.testDevices = [NSArray arrayWithObjects:
+     @"045BB3DE-3CF2-5B56-94AF-85CFDA9C7D1E",
+     nil];*/
+    
+    request.testDevices = [NSArray arrayWithObjects:@"33c1dd26714bf1d45a6e583a9b626399",GAD_SIMULATOR_ID, nil];
+    
+    // Initiate a generic request to load it with an ad.
+    [bannerView_ loadRequest:request];
+    
+    if (toInterfaceOrientation == UIInterfaceOrientationLandscapeLeft) {
+        NSLog(@"Landscape left");
+        [self.view addConstraint:
+         [NSLayoutConstraint constraintWithItem:myTableView
+                                      attribute:NSLayoutAttributeBottom
+                                      relatedBy:NSLayoutRelationEqual
+                                         toItem:self.view
+                                      attribute:NSLayoutAttributeBottom
+                                     multiplier:1.0
+                                       constant:-37]];
+    } else if (toInterfaceOrientation == UIInterfaceOrientationLandscapeRight) {
+        NSLog(@"Landscape right");
+        [self.view addConstraint:
+         [NSLayoutConstraint constraintWithItem:myTableView
+                                      attribute:NSLayoutAttributeBottom
+                                      relatedBy:NSLayoutRelationEqual
+                                         toItem:self.view
+                                      attribute:NSLayoutAttributeBottom
+                                     multiplier:1.0
+                                       constant:-37]];
+    } else if (toInterfaceOrientation == UIInterfaceOrientationPortrait) {
+        NSLog(@"Portrait");
+        [self.view addConstraint:
+         [NSLayoutConstraint constraintWithItem:myTableView
+                                      attribute:NSLayoutAttributeBottom
+                                      relatedBy:NSLayoutRelationEqual
+                                         toItem:self.view
+                                      attribute:NSLayoutAttributeBottom
+                                     multiplier:1.0
+                                       constant:-55]];
+    }
+
+    //myTableView.translatesAutoresizingMaskIntoConstraints=NO;
+    
+    
+}
+
+
 -(void)viewDidAppear:(BOOL)animated
 {
     // returns the same tracker you created in your app delegate
@@ -221,6 +369,15 @@
     
     // manual screen tracking
     [tracker send:[[GAIDictionaryBuilder createAppView] build]];
+    
+    if (IS_WIDESCREEN) {
+        pickerViewContainer.frame = CGRectMake(0, 700, 320, 309);
+        NSLog(@"This is a 4 inch screen");
+    }else{
+        pickerViewContainer.frame = CGRectMake(0, 460, 320, 309);
+        NSLog(@"This is a 3.5 inches screen");
+    }
+
 }
 
 
@@ -240,94 +397,61 @@
 -(void)getLocations:(NSString *)latitude andLongitude:(NSString *)longitude andSpecialty:(NSString *)specialty andState:(NSString *)state andOrder:(NSString *)order
 {
     [self.loading startAnimating];
-    /*
-    [iOSRequest getLocations:latitude andLongitude:longitude andSpecialty:specialty andState:state andOrder:order onCompletion:^(NSDictionary *user1){
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if (user1 == nil) {
-                
-                //warningLabel.text = @"Error, Please Try Again";
-                // warningLabel.hidden = NO;
-                UIAlertView *alert = [[UIAlertView alloc]
-                                      initWithTitle:@"Alerta"
-                                      message:@"Esta categoria esta vacia."
-                                      delegate:nil
-                                      cancelButtonTitle:@"Cancelar"
-                                      otherButtonTitles:nil];
-                
-                [alert show];
-                self.mapButton.enabled = NO;
-                
-            }else self.mapButton.enabled = YES;
-            
-            [myTableView setAlpha:0.0];
-            [UIView beginAnimations:nil context:nil];
-            [myTableView setAlpha:1.0];
-            [UIView commitAnimations];
 
-            
-            [self.loading stopAnimating];
-            if ([user1 isKindOfClass:[NSNull class]]) {
-                UIAlertView *alert = [[UIAlertView alloc]
-                                      initWithTitle:@"Alerta"
-                                      message:@"No hay medicos de esa especialidad en esta region"
-                                      delegate:nil
-                                      cancelButtonTitle:@"Cancelar"
-                                      otherButtonTitles:nil];
-                
-                [alert show];
-                myTableView.hidden = YES;
-            }else{
-                [self setUser:user1];
-                [self.myTableView reloadData];
-                [myTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]
-                                     atScrollPosition:UITableViewScrollPositionNone animated:NO];
-                myTableView.hidden = NO;
-            }
-        });
-    }];*/
-    
-    //-----------------------
     NSMutableDictionary *postParams = [[NSMutableDictionary alloc]init];
     
-    if ([state isEqualToString:@""]) {
-        if ([order isEqualToString:@""]){
-            //fullPath = [basePath stringByAppendingFormat:@"lat=%@&lon=%@&especialidad=%@",latitude, longitude, specialty];
-            [postParams setValue:latitude forKey:@"lat"];
-            [postParams setValue:longitude forKey:@"lon"];
+    if (requestFromSearchButton == YES) {
+        [postParams setValue:latitude forKey:@"lat"];
+        [postParams setValue:longitude forKey:@"lon"];
+        
             [postParams setValue:specialty forKey:@"especialidad"];
-        }else{
-            if ([order isEqualToString:@"distancia"]) {
-                //fullPath = [basePath stringByAppendingFormat:@"lat=%@&lon=%@&especialidad=%@&orden=%@", latitude, longitude,specialty, order];
-                [postParams setValue:latitude forKey:@"lat"];
-                [postParams setValue:longitude forKey:@"lon"];
-                [postParams setValue:specialty forKey:@"especialidad"];
-                [postParams setValue:order forKey:@"orden"];
-            }else{
-                //fullPath = [basePath stringByAppendingFormat:@"especialidad=%@&orden=%@", specialty, order];
-                [postParams setValue:specialty forKey:@"especialidad"];
-                [postParams setValue:order forKey:@"orden"];
-            }
-        }
-    }else{
-        if ([order isEqualToString:@""]){
-            //fullPath = [basePath stringByAppendingFormat:@"lat=%@&lon=%@&especialidad=%@&estado=%@",latitude, longitude, specialty, state];
-            [postParams setValue:latitude forKey:@"lat"];
-            [postParams setValue:longitude forKey:@"lon"];
-            [postParams setValue:specialty forKey:@"especialidad"];
+        
+        
             [postParams setValue:state forKey:@"estado"];
+        
+        
+    
+    }else{
+        if ([state isEqualToString:@""]) {
+            if ([order isEqualToString:@""]){
+                //fullPath = [basePath stringByAppendingFormat:@"lat=%@&lon=%@&especialidad=%@",latitude, longitude, specialty];
+                [postParams setValue:latitude forKey:@"lat"];
+                [postParams setValue:longitude forKey:@"lon"];
+                [postParams setValue:specialty forKey:@"especialidad"];
+            }else{
+                if ([order isEqualToString:@"distancia"]) {
+                    //fullPath = [basePath stringByAppendingFormat:@"lat=%@&lon=%@&especialidad=%@&orden=%@", latitude, longitude,specialty, order];
+                    [postParams setValue:latitude forKey:@"lat"];
+                    [postParams setValue:longitude forKey:@"lon"];
+                    [postParams setValue:specialty forKey:@"especialidad"];
+                    [postParams setValue:order forKey:@"orden"];
+                }else{
+                    //fullPath = [basePath stringByAppendingFormat:@"especialidad=%@&orden=%@", specialty, order];
+                    [postParams setValue:specialty forKey:@"especialidad"];
+                    [postParams setValue:order forKey:@"orden"];
+                }
+            }
         }else{
-            if ([order isEqualToString:@"distancia"]) {
-                //fullPath = [basePath stringByAppendingFormat:@"lat=%@&lon=%@&especialidad=%@&estado=%@&orden=%@", latitude, longitude, specialty, state, order];
+            if ([order isEqualToString:@""]){
+                //fullPath = [basePath stringByAppendingFormat:@"lat=%@&lon=%@&especialidad=%@&estado=%@",latitude, longitude, specialty, state];
                 [postParams setValue:latitude forKey:@"lat"];
                 [postParams setValue:longitude forKey:@"lon"];
                 [postParams setValue:specialty forKey:@"especialidad"];
                 [postParams setValue:state forKey:@"estado"];
-                [postParams setValue:order forKey:@"orden"];
             }else{
-                //fullPath = [basePath stringByAppendingFormat:@"especialidad=%@&estado=%@&orden=%@", specialty, state, order];
-                [postParams setValue:specialty forKey:@"especialidad"];
-                [postParams setValue:state forKey:@"estado"];
-                [postParams setValue:order forKey:@"orden"];
+                if ([order isEqualToString:@"distancia"]) {
+                    //fullPath = [basePath stringByAppendingFormat:@"lat=%@&lon=%@&especialidad=%@&estado=%@&orden=%@", latitude, longitude, specialty, state, order];
+                    [postParams setValue:latitude forKey:@"lat"];
+                    [postParams setValue:longitude forKey:@"lon"];
+                    [postParams setValue:specialty forKey:@"especialidad"];
+                    [postParams setValue:state forKey:@"estado"];
+                    [postParams setValue:order forKey:@"orden"];
+                }else{
+                    //fullPath = [basePath stringByAppendingFormat:@"especialidad=%@&estado=%@&orden=%@", specialty, state, order];
+                    [postParams setValue:specialty forKey:@"especialidad"];
+                    [postParams setValue:state forKey:@"estado"];
+                    [postParams setValue:order forKey:@"orden"];
+                }
             }
         }
     }
@@ -393,6 +517,7 @@
                 myTableView.hidden = NO;
                 [UIView beginAnimations:nil context:nil];
                 [UIView setAnimationDuration:0.3];
+                [UIView setAnimationDelay:1.0];
                 loadMoreDataImage.frame = CGRectMake(15, 460, 290, 50);
                 [loadMoreDataImage setAlpha:0.0];
                 [UIView commitAnimations];
@@ -544,7 +669,11 @@
             loadMoreDataImage.frame = CGRectMake(15, 360, 290, 50);
             [UIView commitAnimations];
             
-            [self getLocations:[latitudeUser stringValue] andLongitude:[longitudeUser stringValue] andSpecialty:specialtyString andState:@"" andOrder:@""];
+            if (requestFromSearchButton == YES) {
+                [self getLocations:[latitudeUser stringValue] andLongitude:[longitudeUser stringValue] andSpecialty:specialtyString andState:selectedStateTid andOrder:@""];
+            }else{
+                [self getLocations:[latitudeUser stringValue] andLongitude:[longitudeUser stringValue] andSpecialty:specialtyString andState:@"" andOrder:@""];
+            }            
             lastIndexPathRow = indexPath.row;
         }
         
@@ -613,11 +742,6 @@
             NSLog(@"Especialidad selected");
             stateOrSpec = 0;
             optionLabelInPickerView.text = @"Especialidades";
-            [UIView animateWithDuration:0.3 animations:^{
-                [UIView setAnimationBeginsFromCurrentState:YES];
-                pickerViewContainer.frame = CGRectMake(0, 151, 320, 260);
-                //scroller.frame = CGRectMake(0, -138, scroller.frame.size.width, scroller.frame.size.height);
-            }];
             pickerStates.hidden = YES;
             picker.hidden = NO;
             [picker reloadAllComponents];
@@ -626,17 +750,33 @@
             NSLog(@"Estado selected");
             stateOrSpec = 1;
             optionLabelInPickerView.text = @"Estados";
+            /*
             [UIView animateWithDuration:0.3 animations:^{
                 [UIView setAnimationBeginsFromCurrentState:YES];
-                pickerViewContainer.frame = CGRectMake(0, 151, 320, 260);
+                pickerViewContainer.frame = CGRectMake(0, 200, 320, 260);
                 //scroller.frame = CGRectMake(0, -138, scroller.frame.size.width, scroller.frame.size.height);
-            }];
+            }];*/
             NSLog(@"StateOrState = %d", stateOrSpec);
             NSLog(@"States after click cell = %@", stat);
             picker.hidden = YES;
             pickerStates.hidden = NO;
             [pickerStates reloadAllComponents];
             specLabelCellString = selectedSpecialtyName;
+        }
+        if (IS_WIDESCREEN) {
+            [UIView animateWithDuration:0.3 animations:^{
+                [UIView setAnimationBeginsFromCurrentState:YES];
+                pickerViewContainer.frame = CGRectMake(0, 288, 320, 260);
+                //scroller.frame = CGRectMake(0, -138, scroller.frame.size.width, scroller.frame.size.height);
+            }];
+            NSLog(@"Is 4 inches screen, in picker view up");
+        }else{
+            [UIView animateWithDuration:0.3 animations:^{
+                [UIView setAnimationBeginsFromCurrentState:YES];
+                pickerViewContainer.frame = CGRectMake(0, 200, 320, 260);
+                //scroller.frame = CGRectMake(0, -138, scroller.frame.size.width, scroller.frame.size.height);
+            }];
+            NSLog(@"Is 3.5 inches screen, in picker view up");
         }
         [optionsTable deselectRowAtIndexPath:indexPath animated:YES];
     }
@@ -954,7 +1094,10 @@
         }
         sortingOptionNum = 1;
     }*/
-    
+    nextPage = NO;
+    requestFromSearchButton = YES;
+    firstRequestFromSearchButton = YES;
+    pageNumber = 1;
     [self getLocations:[latitudeUser stringValue] andLongitude:[longitudeUser stringValue] andSpecialty:selectedSpecialtyTid andState:selectedStateTid andOrder:@""];
     
     subTitleLabel.text = specLabelCellString;
@@ -1081,9 +1224,15 @@
 }
 
 - (IBAction)cancelPicker:(id)sender {
-    [UIView animateWithDuration:0.3 animations:^{
-        pickerViewContainer.frame = CGRectMake(0, 460, 320, 260);        
-    }];
+    if (IS_WIDESCREEN) {
+        [UIView animateWithDuration:0.3 animations:^{
+            pickerViewContainer.frame = CGRectMake(0, 568, 320, 260);
+        }];
+    }else{
+        [UIView animateWithDuration:0.3 animations:^{
+            pickerViewContainer.frame = CGRectMake(0, 460, 320, 260);
+        }];
+    }
 }
 // 
 

@@ -21,6 +21,9 @@
 @property (weak, nonatomic) IBOutlet UITextField *usernameEmailField;
 @property (weak, nonatomic) IBOutlet UITextField *passwordField;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *menuSlideButton;
+@property (weak, nonatomic) IBOutlet UIButton *registerButton;
+@property (weak, nonatomic) IBOutlet UIButton *loginButton;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *registerBottomConstraint;
 
 
 - (IBAction)loginButton:(id)sender;

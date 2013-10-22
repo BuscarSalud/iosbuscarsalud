@@ -26,7 +26,7 @@
 @end
 
 @implementation LoadingAndDecideViewController
-@synthesize uuid, requestObject, passFlag, nid, passwordField, usernameEmailField, window, menuSlideButton;
+@synthesize uuid, requestObject, passFlag, nid, passwordField, usernameEmailField, window, menuSlideButton, registerButton, loginButton, registerBottomConstraint;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -52,6 +52,7 @@
     // Set the gesture
     [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
     
+    
 }
 
 -(void)viewDidAppear:(BOOL)animated
@@ -67,6 +68,40 @@
     // manual screen tracking
     [tracker send:[[GAIDictionaryBuilder createAppView] build]];
     
+    [self.view removeConstraint:registerBottomConstraint];
+    
+    UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
+    
+    if (orientation == UIInterfaceOrientationLandscapeLeft) {
+        registerBottomConstraint =  [NSLayoutConstraint constraintWithItem:registerButton
+                                                                 attribute:NSLayoutAttributeBottom
+                                                                 relatedBy:NSLayoutRelationEqual
+                                                                    toItem:self.view
+                                                                 attribute:NSLayoutAttributeBottom
+                                                                multiplier:1.0
+                                                                  constant:-30];
+        [self.view addConstraint:registerBottomConstraint];
+
+    } else if (orientation == UIInterfaceOrientationLandscapeRight) {
+        registerBottomConstraint =  [NSLayoutConstraint constraintWithItem:registerButton
+                                                                 attribute:NSLayoutAttributeBottom
+                                                                 relatedBy:NSLayoutRelationEqual
+                                                                    toItem:self.view
+                                                                 attribute:NSLayoutAttributeBottom
+                                                                multiplier:1.0
+                                                                  constant:-30];
+        [self.view addConstraint:registerBottomConstraint];
+        
+    } else if (orientation == UIInterfaceOrientationPortrait) {
+        registerBottomConstraint =  [NSLayoutConstraint constraintWithItem:registerButton
+                                                                 attribute:NSLayoutAttributeBottom
+                                                                 relatedBy:NSLayoutRelationEqual
+                                                                    toItem:self.view
+                                                                 attribute:NSLayoutAttributeBottom
+                                                                multiplier:1.0
+                                                                  constant:-94];
+        [self.view addConstraint:registerBottomConstraint];
+    }
 
 }
 
@@ -87,6 +122,46 @@
     if ([passFlag isEqualToString:@"1"] || [isLogged isEqualToString:@"1"]) {
         [self performSegueWithIdentifier:@"toProfile" sender:self];
     }
+}
+
+-(void) willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration{
+    
+    [self.view removeConstraint:registerBottomConstraint];
+    
+    if (toInterfaceOrientation == UIInterfaceOrientationLandscapeLeft)
+    {
+        NSLog(@"Landscape Left");
+        registerBottomConstraint =  [NSLayoutConstraint constraintWithItem:registerButton
+                                                                attribute:NSLayoutAttributeBottom
+                                                                relatedBy:NSLayoutRelationEqual
+                                                                   toItem:self.view
+                                                                attribute:NSLayoutAttributeBottom
+                                                               multiplier:1.0
+                                                                 constant:-30];
+        [self.view addConstraint:registerBottomConstraint];
+    }
+    if (toInterfaceOrientation == UIInterfaceOrientationLandscapeRight) {
+        NSLog(@"Landscape Right");
+        registerBottomConstraint =  [NSLayoutConstraint constraintWithItem:registerButton
+                                                                       attribute:NSLayoutAttributeBottom
+                                                                       relatedBy:NSLayoutRelationEqual
+                                                                          toItem:self.view
+                                                                       attribute:NSLayoutAttributeBottom
+                                                                      multiplier:1.0
+                                                                        constant:-30];
+        [self.view addConstraint:registerBottomConstraint];
+    }
+    if (toInterfaceOrientation == UIInterfaceOrientationPortrait) {
+        registerBottomConstraint =  [NSLayoutConstraint constraintWithItem:registerButton
+                                                                       attribute:NSLayoutAttributeBottom
+                                                                       relatedBy:NSLayoutRelationEqual
+                                                                          toItem:self.view
+                                                                       attribute:NSLayoutAttributeBottom
+                                                                      multiplier:1.0
+                                                                        constant:-94];
+        [self.view addConstraint:registerBottomConstraint];
+    }
+    //registerButton.translatesAutoresizingMaskIntoConstraints = NO;
 }
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender

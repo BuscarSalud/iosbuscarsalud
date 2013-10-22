@@ -33,7 +33,7 @@
     double lon;
 }
 
-@synthesize specialtyNameLabel, receiveDisplay, receiveName, tabBarController, latitude, longitude, sidebarButton;
+@synthesize specialtyNameLabel, receiveDisplay, receiveName, tabBarController, latitude, longitude, sidebarButton, specialtyLabel, tapLabel;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -49,9 +49,9 @@
     [super viewDidLoad];
     
     if (IS_WIDESCREEN) {
-        self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-five.png"]];
+        self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-320x568.png"]];
     }else{
-        self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main.png"]];
+        self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-320x460.png"]];
     }
     
 
@@ -83,6 +83,32 @@
 
 }
 
+-(void) willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+{
+    if (toInterfaceOrientation == UIInterfaceOrientationLandscapeLeft) {
+        NSLog(@"Landscape left");
+        if (IS_WIDESCREEN) {
+            self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-568x320.png"]];
+        }else{
+            self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-460x320.png"]];
+        }
+    } else if (toInterfaceOrientation == UIInterfaceOrientationLandscapeRight) {
+        NSLog(@"Landscape right");
+        if (IS_WIDESCREEN) {
+            self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-568x320.png"]];
+        }else{
+            self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-460x320.png"]];
+        }
+    } else if (toInterfaceOrientation == UIInterfaceOrientationPortrait) {
+        NSLog(@"Portrait");
+        if (IS_WIDESCREEN) {
+            self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-320x568.png"]];
+        }else{
+            self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-320x460.png"]];
+        }
+    }
+}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -92,6 +118,9 @@
 -(void)viewDidAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    
+    specialtyLabel.textColor = [UIColor blackColor];
+    tapLabel.textColor = [UIColor blackColor];
     
     // returns the same tracker you created in your app delegate
     // defaultTracker originally declared in AppDelegate.m
@@ -103,6 +132,29 @@
     
     // manual screen tracking
     [tracker send:[[GAIDictionaryBuilder createAppView] build]];
+    
+    UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
+    
+    if (orientation == UIInterfaceOrientationLandscapeLeft) {
+        if (IS_WIDESCREEN) {
+            self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-568x320.png"]];
+        }else{
+            self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-460x320.png"]];
+        }
+    } else if (orientation == UIInterfaceOrientationLandscapeRight) {
+        if (IS_WIDESCREEN) {
+            self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-568x320.png"]];
+        }else{
+            self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-460x320.png"]];
+        }
+
+    } else if (orientation == UIInterfaceOrientationPortrait) {
+        if (IS_WIDESCREEN) {
+            self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-320x568.png"]];
+        }else{
+            self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-320x460.png"]];
+        }
+    }
 }
 
 #pragma mark - Get Current Location
@@ -146,7 +198,20 @@
 }
 
 
-- (IBAction)sidebarButton:(id)sender {
 
+- (IBAction)searchButton:(id)sender {
+    specialtyLabel.textColor = [UIColor blackColor];
+    tapLabel.textColor = [UIColor blackColor];
 }
+
+- (IBAction)searchButtonTouchDown:(id)sender {
+    specialtyLabel.textColor = [UIColor whiteColor];
+    tapLabel.textColor = [UIColor whiteColor];
+}
+
+- (IBAction)searchButtonTouchDragOutside:(id)sender {
+    specialtyLabel.textColor = [UIColor blackColor];
+    tapLabel.textColor = [UIColor blackColor];
+}
+
 @end

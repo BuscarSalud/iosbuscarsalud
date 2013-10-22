@@ -13,6 +13,7 @@
     double lat;
     double lon;
     GADBannerView *bannerView_;
+    GADBannerView *bannerViewOther_;
 }
 
 - (IBAction)goBack:(id)sender;

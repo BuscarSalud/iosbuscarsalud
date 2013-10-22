@@ -21,6 +21,7 @@
     NSDictionary *states;
     UIView *containerView;
     NSIndexPath *lastPath;
+    BOOL landscape;
 }
 
 @end
@@ -40,15 +41,61 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    landscape = NO;
     // Create a view of the standard size at the top of the screen.
     // Available AdSize constants are explained in GADAdSize.h.
-    bannerView_ = [[GADBannerView alloc] initWithFrame:CGRectMake(0.0,
-                                                                  361.0,
-                                                                  GAD_SIZE_320x50.width,
-                                                                  GAD_SIZE_320x50.height)];
+    
+    
+    UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
+    
+    if (orientation == UIInterfaceOrientationLandscapeLeft) {
+        NSLog(@"Landscape left");
+        bannerView_ = [[GADBannerView alloc] initWithAdSize:kGADAdSizeSmartBannerLandscape origin:CGPointMake(0.0, 340.0)];
+        landscape = YES;
+        [self.view addConstraint:
+         [NSLayoutConstraint constraintWithItem:myTableView
+                                      attribute:NSLayoutAttributeBottom
+                                      relatedBy:NSLayoutRelationEqual
+                                         toItem:bannerView_
+                                      attribute:NSLayoutAttributeBaseline
+                                     multiplier:1.0
+                                       constant:-37]];
+        [self startLoadingBox];
+        NSLog(@"Landscape set to YES in didLoad");
+    } else if (orientation == UIInterfaceOrientationLandscapeRight) {
+        NSLog(@"Landscape right");
+        bannerView_ = [[GADBannerView alloc] initWithAdSize:kGADAdSizeSmartBannerLandscape origin:CGPointMake(0.0, 340.0)];
+        landscape = YES;
+        [self.view addConstraint:
+         [NSLayoutConstraint constraintWithItem:myTableView
+                                      attribute:NSLayoutAttributeBottom
+                                      relatedBy:NSLayoutRelationEqual
+                                         toItem:bannerView_
+                                      attribute:NSLayoutAttributeBaseline
+                                     multiplier:1.0
+                                       constant:-37]];
+        [self startLoadingBox];
+        NSLog(@"Landscape set to YES in didLoad");
+    } else if (orientation == UIInterfaceOrientationPortrait) {
+        NSLog(@"Portrait");
+        /*bannerView_ = [[GADBannerView alloc] initWithFrame:CGRectMake(0.0,
+                                                                      361.0,
+                                                                      GAD_SIZE_320x50.width,
+                                                                      GAD_SIZE_320x50.height)];*/
+        bannerView_ = [[GADBannerView alloc] initWithAdSize:kGADAdSizeSmartBannerPortrait origin:CGPointMake(0.0, 340.0)];
+        [self.view addConstraint:
+         [NSLayoutConstraint constraintWithItem:myTableView
+                                      attribute:NSLayoutAttributeBottom
+                                      relatedBy:NSLayoutRelationEqual
+                                         toItem:bannerView_
+                                      attribute:NSLayoutAttributeBaseline
+                                     multiplier:1.0
+                                       constant:-55]];
+        [self startLoadingBox];
+        landscape = NO;
+    }
     
     bannerView_.translatesAutoresizingMaskIntoConstraints=NO;
-
     
     // Specify the ad's "unit identifier". This is your AdMob Publisher ID.
     bannerView_.adUnitID = @"ca-app-pub-5383770617488734/3234786808";
@@ -78,21 +125,26 @@
                                  multiplier:1.0
                                    constant:0]];
     
+    
+
+    
     GADRequest *request = [GADRequest request];
     
     // Make the request for a test ad. Put in an identifier for
     // the simulator as well as any devices you want to receive test ads.
     /*request.testDevices = [NSArray arrayWithObjects:
-                           @"045BB3DE-3CF2-5B56-94AF-85CFDA9C7D1E",
-                           nil];*/
-    request.testDevices = [NSArray arrayWithObjects:@"33c1dd26714bf1d45a6e583a9b626399", nil];
+     @"045BB3DE-3CF2-5B56-94AF-85CFDA9C7D1E",
+     nil];*/
+    
+    request.testDevices = [NSArray arrayWithObjects:@"33c1dd26714bf1d45a6e583a9b626399",GAD_SIMULATOR_ID, nil];
     
     // Initiate a generic request to load it with an ad.
     [bannerView_ loadRequest:request];
+
     
     
     [self getAllStates];
-    [self startLoadingBox];
+    //[self startLoadingBox];
     UIImage *navBackgroundImage = [UIImage imageNamed:@"navbar-background"];
     [navBar setBackgroundImage:navBackgroundImage forBarMetrics:UIBarMetricsDefault];
 
@@ -133,8 +185,108 @@
     
 }
 
+-(void) willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
+    
+    [bannerView_ removeFromSuperview];
+    if (toInterfaceOrientation == UIInterfaceOrientationLandscapeLeft) {
+        NSLog(@"Landscape left");
+        bannerView_ = [[GADBannerView alloc] initWithAdSize:kGADAdSizeSmartBannerLandscape origin:CGPointMake(0.0, 340.0)];
+    } else if (toInterfaceOrientation == UIInterfaceOrientationLandscapeRight) {
+        NSLog(@"Landscape right");
+        bannerView_ = [[GADBannerView alloc] initWithAdSize:kGADAdSizeSmartBannerLandscape origin:CGPointMake(0.0, 340.0)];
+    } else if (toInterfaceOrientation == UIInterfaceOrientationPortrait) {
+        NSLog(@"Portrait");
+        bannerView_ = [[GADBannerView alloc] initWithFrame:CGRectMake(0.0,
+                                                                      361.0,
+                                                                      GAD_SIZE_320x50.width,
+                                                                      GAD_SIZE_320x50.height)];
+    }
+    bannerView_.translatesAutoresizingMaskIntoConstraints=NO;
+    
+    // Specify the ad's "unit identifier". This is your AdMob Publisher ID.
+    bannerView_.adUnitID = @"ca-app-pub-5383770617488734/3234786808";
+    
+    bannerView_.rootViewController = self;
+    [self.view addSubview:bannerView_];
+    
+    
+    // Constraint keeps ad at the bottom of the screen at all times.
+    [self.view addConstraint:
+     [NSLayoutConstraint constraintWithItem:bannerView_
+                                  attribute:NSLayoutAttributeBottom
+                                  relatedBy:NSLayoutRelationEqual
+                                     toItem:self.view
+                                  attribute:NSLayoutAttributeBottom
+                                 multiplier:1.0
+                                   constant:0]];
+    
+    // Constraint keeps ad in the center of the screen at all times.
+    [self.view addConstraint:
+     [NSLayoutConstraint constraintWithItem:bannerView_
+                                  attribute:NSLayoutAttributeCenterX
+                                  relatedBy:NSLayoutRelationEqual
+                                     toItem:self.view
+                                  attribute:NSLayoutAttributeCenterX
+                                 multiplier:1.0
+                                   constant:0]];
+    
+    GADRequest *request = [GADRequest request];
+    
+    // Make the request for a test ad. Put in an identifier for
+    // the simulator as well as any devices you want to receive test ads.
+    /*request.testDevices = [NSArray arrayWithObjects:
+     @"045BB3DE-3CF2-5B56-94AF-85CFDA9C7D1E",
+     nil];*/
+    
+    request.testDevices = [NSArray arrayWithObjects:@"33c1dd26714bf1d45a6e583a9b626399", nil];
+    
+    // Initiate a generic request to load it with an ad.
+    [bannerView_ loadRequest:request];
+    
+    if (toInterfaceOrientation == UIInterfaceOrientationLandscapeLeft) {
+        NSLog(@"Landscape left");
+        [self.view addConstraint:
+         [NSLayoutConstraint constraintWithItem:myTableView
+                                      attribute:NSLayoutAttributeBottom
+                                      relatedBy:NSLayoutRelationEqual
+                                         toItem:self.view
+                                      attribute:NSLayoutAttributeBottom
+                                     multiplier:1.0
+                                       constant:-37]];
+    } else if (toInterfaceOrientation == UIInterfaceOrientationLandscapeRight) {
+        NSLog(@"Landscape right");
+        [self.view addConstraint:
+         [NSLayoutConstraint constraintWithItem:myTableView
+                                      attribute:NSLayoutAttributeBottom
+                                      relatedBy:NSLayoutRelationEqual
+                                         toItem:self.view
+                                      attribute:NSLayoutAttributeBottom
+                                     multiplier:1.0
+                                       constant:-37]];
+    } else if (toInterfaceOrientation == UIInterfaceOrientationPortrait) {
+        NSLog(@"Portrait");
+        [self.view addConstraint:
+         [NSLayoutConstraint constraintWithItem:myTableView
+                                      attribute:NSLayoutAttributeBottom
+                                      relatedBy:NSLayoutRelationEqual
+                                         toItem:self.view
+                                      attribute:NSLayoutAttributeBottom
+                                     multiplier:1.0
+                                       constant:-55]];
+    }
+
+
+    //myTableView.translatesAutoresizingMaskIntoConstraints=NO;
+    
+    
+}
+
 -(void)viewDidAppear:(BOOL)animated
 {
+    
+
+
+    
     // returns the same tracker you created in your app delegate
     // defaultTracker originally declared in AppDelegate.m
     id tracker = [[GAI sharedInstance] defaultTracker];
@@ -239,13 +391,24 @@
     UIActivityIndicatorView *activitIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
     containerView = [[UIImageView alloc] init];
     UIImageView *activityImageView = [[UIImageView alloc] initWithImage:statusImage];
-    activityImageView.frame = CGRectMake(
-                                         self.view.frame.size.width/2
-                                         -statusImage.size.width/2,
-                                         self.view.frame.size.height/2
-                                         -statusImage.size.height/2,
-                                         statusImage.size.width,
-                                         statusImage.size.height);
+    
+    if (landscape == YES) {
+        activityImageView.frame = CGRectMake(
+                                             230 - statusImage.size.width/2,
+                                             160 - statusImage.size.height/2,
+                                             statusImage.size.width,
+                                             statusImage.size.height);
+        NSLog(@"Loading Box in landscape!");
+    }else{
+        activityImageView.frame = CGRectMake(
+                                             self.view.frame.size.width/2
+                                             -statusImage.size.width/2,
+                                             self.view.frame.size.height/2
+                                             -statusImage.size.height/2,
+                                             statusImage.size.width,
+                                             statusImage.size.height);
+    }
+    
     activitIndicator.center = activityImageView.center;
     [activitIndicator startAnimating];
     [containerView addSubview:activityImageView];

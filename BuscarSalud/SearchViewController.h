@@ -25,9 +25,14 @@
 
 @property (nonatomic, strong) NSNumber *latitude;
 @property (nonatomic, strong) NSNumber *longitude;
-- (IBAction)sidebarButton:(id)sender;
 @property (weak, nonatomic) IBOutlet UIButton *sidebarButton;
+- (IBAction)searchButton:(id)sender;
+- (IBAction)searchButtonTouchDown:(id)sender;
+- (IBAction)searchButtonTouchDragOutside:(id)sender;
 
+
+@property (weak, nonatomic) IBOutlet UILabel *specialtyLabel;
+@property (weak, nonatomic) IBOutlet UILabel *tapLabel;
 
 
 
