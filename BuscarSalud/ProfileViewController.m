@@ -28,6 +28,7 @@
     int limit;
     int baseLineVariable;
     int fl;
+    BOOL landscape;
 }
 
 #define BASE_LINE 150
@@ -46,7 +47,7 @@
 @end
 
 @implementation ProfileViewController
-@synthesize nidReceived, phoneLabel, imageProfile, streetLabel, coloniaLabel, specialtyLabel, fromMap, subTitleLabel, stateLabel, navBar, mapButton, sendMail, phoneImageView;
+@synthesize nidReceived, phoneLabel, imageProfile, streetLabel, coloniaLabel, specialtyLabel, fromMap, subTitleLabel, stateLabel, navBar, mapButton, sendMail, phoneImageView, profileHeaderImageView, profileImageConstraintLeft, stateLabelConstraintLeft, profileHeaderWidthConstraint;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -60,7 +61,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
+    landscape = NO;
     // Create a view of the standard size at the top of the screen.
     // Available AdSize constants are explained in GADAdSize.h.
     bannerView_ = [[GADBannerView alloc] initWithFrame:CGRectMake(0.0,
@@ -137,6 +138,126 @@
     
 }
 
+
+-(void) willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+{
+    [self.view removeConstraint:profileHeaderWidthConstraint];
+    if (toInterfaceOrientation == UIInterfaceOrientationLandscapeLeft) {
+        NSLog(@"Landscape left");
+        [profileHeaderImageView setImage:[UIImage imageNamed:@"profile-header1-300x460.png"]];
+        [self.view addConstraint:
+         [NSLayoutConstraint constraintWithItem:profileHeaderImageView
+                                      attribute:NSLayoutAttributeRight
+                                      relatedBy:NSLayoutRelationEqual
+                                         toItem:self.view
+                                      attribute:NSLayoutAttributeTrailing
+                                     multiplier:1.0
+                                       constant:0]];
+        [self.view removeConstraint:profileImageConstraintLeft];
+        
+        profileImageConstraintLeft = [NSLayoutConstraint constraintWithItem:imageProfile
+                                      attribute:NSLayoutAttributeLeft
+                                      relatedBy:NSLayoutRelationEqual
+                                         toItem:self.view
+                                      attribute:NSLayoutAttributeLeading
+                                     multiplier:1.0
+                                       constant:65];
+        [self.view addConstraint:profileImageConstraintLeft];
+        [self.view removeConstraint:stateLabelConstraintLeft];
+        stateLabelConstraintLeft = [NSLayoutConstraint constraintWithItem:stateLabel
+                                                                attribute:NSLayoutAttributeLeft
+                                                                relatedBy:NSLayoutRelationEqual
+                                                                   toItem:self.view
+                                                                attribute:NSLayoutAttributeLeading
+                                                               multiplier:1.0
+                                                                 constant:280];
+        [self.view addConstraint:stateLabelConstraintLeft];
+        landscape = YES;
+        [self listSubviewsOfView:scroller];
+    } else if (toInterfaceOrientation == UIInterfaceOrientationLandscapeRight) {
+        NSLog(@"Landscape right");
+        [profileHeaderImageView setImage:[UIImage imageNamed:@"profile-header1-300x460.png"]];
+        [self.view addConstraint:
+         [NSLayoutConstraint constraintWithItem:profileHeaderImageView
+                                      attribute:NSLayoutAttributeRight
+                                      relatedBy:NSLayoutRelationEqual
+                                         toItem:self.view
+                                      attribute:NSLayoutAttributeTrailing
+                                     multiplier:1.0
+                                       constant:0]];
+        [self.view removeConstraint:profileImageConstraintLeft];
+        
+        profileImageConstraintLeft = [NSLayoutConstraint constraintWithItem:imageProfile
+                                                                  attribute:NSLayoutAttributeLeft
+                                                                  relatedBy:NSLayoutRelationEqual
+                                                                     toItem:self.view
+                                                                  attribute:NSLayoutAttributeLeading
+                                                                 multiplier:1.0
+                                                                   constant:65];
+        [self.view addConstraint:profileImageConstraintLeft];
+        [self.view removeConstraint:stateLabelConstraintLeft];
+        stateLabelConstraintLeft = [NSLayoutConstraint constraintWithItem:stateLabel
+                                                                attribute:NSLayoutAttributeLeft
+                                                                relatedBy:NSLayoutRelationEqual
+                                                                   toItem:self.view
+                                                                attribute:NSLayoutAttributeLeading
+                                                               multiplier:1.0
+                                                                 constant:280];
+        [self.view addConstraint:stateLabelConstraintLeft];
+        landscape = YES;
+
+    } else if (toInterfaceOrientation == UIInterfaceOrientationPortrait) {
+        NSLog(@"Portrait");
+        [profileHeaderImageView setImage:[UIImage imageNamed:@"profile-header1.png"]];
+        [self.view addConstraint:
+         [NSLayoutConstraint constraintWithItem:profileHeaderImageView
+                                      attribute:NSLayoutAttributeRight
+                                      relatedBy:NSLayoutRelationEqual
+                                         toItem:self.view
+                                      attribute:NSLayoutAttributeTrailing
+                                     multiplier:1.0
+                                       constant:0]];
+        [self.view removeConstraint:profileImageConstraintLeft];
+        
+        profileImageConstraintLeft = [NSLayoutConstraint constraintWithItem:imageProfile
+                                                                  attribute:NSLayoutAttributeLeft
+                                                                  relatedBy:NSLayoutRelationEqual
+                                                                     toItem:self.view
+                                                                  attribute:NSLayoutAttributeLeading
+                                                                 multiplier:1.0
+                                                                   constant:17];
+        [self.view addConstraint:profileImageConstraintLeft];
+        [self.view removeConstraint:stateLabelConstraintLeft];
+        stateLabelConstraintLeft = [NSLayoutConstraint constraintWithItem:stateLabel
+                                                                attribute:NSLayoutAttributeLeft
+                                                                relatedBy:NSLayoutRelationEqual
+                                                                   toItem:self.view
+                                                                attribute:NSLayoutAttributeLeading
+                                                               multiplier:1.0
+                                                                 constant:167];
+        [self.view addConstraint:stateLabelConstraintLeft];
+        landscape = NO;
+
+    }
+
+}
+
+- (void)listSubviewsOfView:(UIView *)view {
+    
+    // Get the subviews of the view
+    NSArray *subviews = [view subviews];
+    
+    // Return if there are no subviews
+    if ([subviews count] == 0) return;
+    
+    for (UIView *subview in subviews) {
+        
+        NSLog(@"%@", subview);
+        
+        // List the subviews of subview
+        [self listSubviewsOfView:subview];
+    }
+}
 
 -(void)getDoctor:(NSString *)nid
 {
@@ -252,7 +373,12 @@
         UILabel *pointsLabel = [[UILabel alloc]init];
         UIImage *pointsContainerImage = [UIImage imageNamed:@"points-container.png"];
         UIImageView *pointsContainerView = [[UIImageView alloc]initWithImage:pointsContainerImage];
-        pointsContainerView.frame = CGRectMake(114, 98, pointsContainerView.frame.size.width, pointsContainerView.frame.size.height);
+        if (landscape) {
+            pointsContainerView.frame = CGRectMake(114, 163, pointsContainerView.frame.size.width, pointsContainerView.frame.size.height);
+        }else{
+            pointsContainerView.frame = CGRectMake(114, 98, pointsContainerView.frame.size.width, pointsContainerView.frame.size.height);
+        }
+        
         [pointsLabel setText:[_doc objectForKey:@"points"]];
         [pointsLabel setFont:verdanaPoints];
         pointsLabel.frame = CGRectMake(115, 115, pointsContainerView.frame.size.width - 2, 10);
