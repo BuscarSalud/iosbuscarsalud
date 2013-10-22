@@ -4017,13 +4017,13 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstAttribute="centerY" secondItem="G3e-HL-7lt" secondAttribute="centerY" type="user" id="6Go-EQ-AaC"/>
                             <constraint firstItem="rb4-1u-LUs" firstAttribute="leading" secondItem="XnA-8H-J36" secondAttribute="leading" type="default" id="6gW-YK-RDl"/>
-                            <constraint firstItem="G3e-HL-7lt" firstAttribute="bottom" secondItem="rb4-1u-LUs" secondAttribute="bottom" type="user" id="9sn-F1-jul"/>
                             <constraint firstItem="Wpi-xW-S3U" firstAttribute="leading" secondItem="Cph-RU-wlc" secondAttribute="leading" constant="16" id="Knc-C9-j4H"/>
+                            <constraint firstItem="G3e-HL-7lt" firstAttribute="top" secondItem="Cph-RU-wlc" secondAttribute="top" constant="204" id="MxC-gJ-nUf"/>
                             <constraint firstItem="rb4-1u-LUs" firstAttribute="top" secondItem="XnA-8H-J36" secondAttribute="bottom" constant="1" type="user" id="WgX-M3-Awt"/>
                             <constraint firstAttribute="centerX" secondItem="G3e-HL-7lt" secondAttribute="centerX" type="user" id="cDK-Tg-Mjk"/>
                             <constraint firstItem="rb4-1u-LUs" firstAttribute="centerX" secondItem="G3e-HL-7lt" secondAttribute="centerX" type="default" id="cvF-1K-uIu"/>
+                            <constraint firstItem="XnA-8H-J36" firstAttribute="top" secondItem="Cph-RU-wlc" secondAttribute="top" constant="213" id="duI-MV-Sqi"/>
                             <constraint firstItem="Wpi-xW-S3U" firstAttribute="top" secondItem="Cph-RU-wlc" secondAttribute="top" constant="30" id="k56-sO-gdo"/>
                         </constraints>
                     </view>
