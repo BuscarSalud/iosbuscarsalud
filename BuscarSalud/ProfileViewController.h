@@ -32,6 +32,11 @@
 @property (weak, nonatomic) IBOutlet UIButton *sendMail;
 @property (weak, nonatomic) IBOutlet UILabel *stateLabel;
 @property (weak, nonatomic) IBOutlet UIImageView *phoneImageView;
+@property (weak, nonatomic) IBOutlet UIImageView *profileHeaderImageView;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *profileHeaderWidthConstraint;
+
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *profileImageConstraintLeft;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *stateLabelConstraintLeft;
 
 
 - (IBAction)goBack:(id)sender;
