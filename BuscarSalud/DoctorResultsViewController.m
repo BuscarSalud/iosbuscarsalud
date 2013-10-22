@@ -162,7 +162,7 @@
     /*request.testDevices = [NSArray arrayWithObjects:
                            @"045BB3DE-3CF2-5B56-94AF-85CFDA9C7D1E",
                            nil];*/
-    request.testDevices = [NSArray arrayWithObjects:@"33c1dd26714bf1d45a6e583a9b626399", nil];
+    request.testDevices = [NSArray arrayWithObjects:@"33c1dd26714bf1d45a6e583a9b626399",GAD_SIMULATOR_ID, nil];
     
     // Initiate a generic request to load it with an ad.
     [bannerView_ loadRequest:request];
