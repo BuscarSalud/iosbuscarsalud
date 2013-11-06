@@ -44,6 +44,10 @@
     landscape = NO;
     // Create a view of the standard size at the top of the screen.
     // Available AdSize constants are explained in GADAdSize.h.
+    self.navigationController.navigationBarHidden = NO;
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
+    [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
+
     
     
     UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
@@ -145,8 +149,14 @@
     
     [self getAllStates];
     //[self startLoadingBox];
-    UIImage *navBackgroundImage = [UIImage imageNamed:@"navbar-background"];
-    [navBar setBackgroundImage:navBackgroundImage forBarMetrics:UIBarMetricsDefault];
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0){
+        UIImage *navBackgroundImage = [UIImage imageNamed:@"navbar-background-ios7.png"];
+        [self.navigationController.navigationBar setBackgroundImage:navBackgroundImage forBarMetrics:UIBarMetricsDefault];
+    }else{
+        UIImage *navBackgroundImage = [UIImage imageNamed:@"navbar-background.png"];
+        [self.navigationController.navigationBar setBackgroundImage:navBackgroundImage forBarMetrics:UIBarMetricsDefault];
+    }
+    
 
     //UIFont *sourceSansProRegular = [UIFont fontWithName:@"SourceSansPro-Regular" size:18];
     //UIFont *sourceSansProBold = [UIFont fontWithName:@"SourceSansPro-Bold" size:18];

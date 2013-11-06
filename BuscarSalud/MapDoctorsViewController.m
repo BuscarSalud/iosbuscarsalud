@@ -40,8 +40,15 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    UIImage *navBackgroundImage = [UIImage imageNamed:@"navbar-background"];
-    [navBar setBackgroundImage:navBackgroundImage forBarMetrics:UIBarMetricsDefault];
+   // UIImage *navBackgroundImage = [UIImage imageNamed:@"navbar-background-ios7"];
+    //[navBar setBackgroundImage:navBackgroundImage forBarMetrics:UIBarMetricsDefault];
+    UINavigationBar *navigationBar = [[UINavigationBar alloc]init];
+    [self.view addSubview:navigationBar];
+    
+    NSString* navBarPortraitBackgroundPath = [[NSBundle mainBundle] pathForResource:@"navbar-background-ios7" ofType:@"png"];
+    
+
+    [[UINavigationBar appearance] setBackgroundImage:[UIImage imageWithContentsOfFile:navBarPortraitBackgroundPath] forBarPosition:UIBarPositionTopAttached barMetrics:UIBarMetricsDefault];
     
     locationManager = [[CLLocationManager alloc] init];
     locationManager.delegate = self;
@@ -181,9 +188,7 @@
     
 }
 
-- (IBAction)backButton:(id)sender {
-    [self dismissViewControllerAnimated:YES completion:nil];
-}
+
 
 - (IBAction)setMapType:(id)sender {
     switch (((UISegmentedControl *) sender).selectedSegmentIndex) {
@@ -201,6 +206,11 @@
             break;
     }
 }
+
+- (IBAction)backButtonBarItem:(id)sender {
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
 
 -(MKAnnotationView *) mapView:(MKMapView *)aMapView viewForAnnotation:(id<MKAnnotation>)annotation
 {

@@ -48,13 +48,20 @@
 {
     [super viewDidLoad];
     
+    //[self setNeedsStatusBarAppearanceUpdate];
+    self.navigationController.navigationBarHidden = YES;
+    
     if (IS_WIDESCREEN) {
         self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-320x568.png"]];
     }else{
         self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-320x460.png"]];
     }
     
-
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0)
+    {
+        //[[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque];
+        //[[UINavigationBar appearance] setTintColor:[UIColor blackColor]];
+    }
 
     
     // Set the side bar button action. When it's tapped, it'll show up the sidebar.
@@ -82,6 +89,12 @@
     NSLog(@"specialties in didload = %@", specialties);
 
 }
+/*
+- (UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleDefault;
+}*/
+
 
 -(void) willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
 {
@@ -115,9 +128,19 @@
     // Dispose of any resources that can be recreated.
 }
 
+-(void)viewWillAppear:(BOOL)animated
+{
+    self.navigationController.navigationBarHidden = YES;
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0)
+    {
+        //[[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque];
+        //[[UINavigationBar appearance] setTintColor:[UIColor blackColor]];
+    }
+}
 -(void)viewDidAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque];
     
     specialtyLabel.textColor = [UIColor blackColor];
     tapLabel.textColor = [UIColor blackColor];
@@ -135,24 +158,28 @@
     
     UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
     
-    if (orientation == UIInterfaceOrientationLandscapeLeft) {
-        if (IS_WIDESCREEN) {
-            self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-568x320.png"]];
-        }else{
-            self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-460x320.png"]];
-        }
-    } else if (orientation == UIInterfaceOrientationLandscapeRight) {
-        if (IS_WIDESCREEN) {
-            self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-568x320.png"]];
-        }else{
-            self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-460x320.png"]];
-        }
-
-    } else if (orientation == UIInterfaceOrientationPortrait) {
-        if (IS_WIDESCREEN) {
-            self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-320x568.png"]];
-        }else{
-            self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-320x460.png"]];
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0) {
+        self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-320x480.png"]];
+    }else{
+        if (orientation == UIInterfaceOrientationLandscapeLeft) {
+            if (IS_WIDESCREEN) {
+                self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-568x320.png"]];
+            }else{
+                self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-460x320.png"]];
+            }
+        } else if (orientation == UIInterfaceOrientationLandscapeRight) {
+            if (IS_WIDESCREEN) {
+                self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-568x320.png"]];
+            }else{
+                self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-460x320.png"]];
+            }
+            
+        } else if (orientation == UIInterfaceOrientationPortrait) {
+            if (IS_WIDESCREEN) {
+                self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-320x568.png"]];
+            }else{
+                self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-320x460.png"]];
+            }
         }
     }
 }

@@ -16,7 +16,11 @@
 @property (weak, nonatomic) IBOutlet UIToolbar *toolBar;
 @property (weak, nonatomic) IBOutlet UINavigationBar *navBar;
 
-- (IBAction)backButton:(id)sender;
+
 - (IBAction)setMapType:(id)sender;
+- (IBAction)backButtonBarItem:(id)sender;
+
+
+
 
 @end

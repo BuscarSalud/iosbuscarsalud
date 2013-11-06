@@ -36,6 +36,7 @@
 @property (weak, nonatomic) IBOutlet UITableView *myTableView;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *mapButton;
 
+
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *backButton;
 
 @property (weak, nonatomic) IBOutlet UISegmentedControl *sortingControl;

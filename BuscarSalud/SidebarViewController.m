@@ -29,6 +29,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackTranslucent];
 
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
@@ -95,6 +96,7 @@
     UIView *bgColorView = [[UIView alloc] init];
     [bgColorView setBackgroundColor:[UIColor colorWithRed:(93/255.0) green:(153/255.0) blue:(41/255.0) alpha:11]];
     [cell setSelectedBackgroundView:bgColorView];
+    cell.backgroundColor = [UIColor clearColor];
 
     
     return cell;
@@ -155,17 +157,23 @@
 - (void) prepareForSegue: (UIStoryboardSegue *) segue sender: (id) sender
 {
     if ( [segue isKindOfClass: [SWRevealViewControllerSegue class]] ) {
-        SWRevealViewControllerSegue *swSegue = (SWRevealViewControllerSegue*) segue;
+        SWRevealViewControllerSegue* rvcs = (SWRevealViewControllerSegue*) segue;
         
-        swSegue.performBlock = ^(SWRevealViewControllerSegue* rvc_segue, UIViewController* svc, UIViewController* dvc) {
+        SWRevealViewController* rvc = self.revealViewController;
+        NSAssert( rvc != nil, @"oops! must have a revealViewController" );
+        
+        NSAssert( [rvc.frontViewController isKindOfClass: [UINavigationController class]], @"oops!  for this segue we want a permanent navigation controller in the front!" );
+        
+        rvcs.performBlock = ^(SWRevealViewControllerSegue* rvc_segue, UIViewController* svc, UIViewController* dvc) {
             
-            UINavigationController* navController = (UINavigationController*)self.revealViewController.frontViewController;
-            [navController setViewControllers: @[dvc] animated: NO ];
-            [self.revealViewController setFrontViewPosition: FrontViewPositionLeft animated: YES];
+            //            UINavigationController* nc = (UINavigationController*)rvc.frontViewController;
+            //            [nc setViewControllers: @[ dvc ] animated: NO ];
+            //            [rvc setFrontViewPosition: FrontViewPositionLeft animated: YES];
+            
+            UINavigationController* nc = [[UINavigationController alloc] initWithRootViewController:dvc];
+            [rvc setFrontViewController:nc animated:YES]; 
         };
-        
     }
-
 }
 
 @end

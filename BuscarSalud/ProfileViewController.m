@@ -62,6 +62,9 @@
 {
     [super viewDidLoad];
     landscape = NO;
+    
+    
+    
     // Create a view of the standard size at the top of the screen.
     // Available AdSize constants are explained in GADAdSize.h.
     bannerView_ = [[GADBannerView alloc] initWithFrame:CGRectMake(0.0,

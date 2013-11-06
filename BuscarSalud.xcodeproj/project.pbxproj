@@ -67,6 +67,7 @@
 		023F33E616DAB21100D4845C /* DoctorResultsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 023F33E516DAB21000D4845C /* DoctorResultsViewController.m */; };
 		023F33E916DAC41F00D4845C /* iOSRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 023F33E816DAC41F00D4845C /* iOSRequest.m */; };
 		023F33EC16DAC59100D4845C /* NSString+WebService.m in Sources */ = {isa = PBXBuildFile; fileRef = 023F33EB16DAC59100D4845C /* NSString+WebService.m */; };
+		0243721918224334006D8959 /* navbar-background-ios7.png in Resources */ = {isa = PBXBuildFile; fileRef = 0243721818224334006D8959 /* navbar-background-ios7.png */; };
 		02447FCA16E5CE3400BD893E /* navbar-background.png in Resources */ = {isa = PBXBuildFile; fileRef = 02447FC916E5CE3400BD893E /* navbar-background.png */; };
 		02467A26170E8E5A00E120E9 /* SourceSansPro-Regular-webfont.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 02467A25170E8E5A00E120E9 /* SourceSansPro-Regular-webfont.ttf */; };
 		02467A28170E8EAA00E120E9 /* SourceSansPro-Bold-webfont.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 02467A27170E8EAA00E120E9 /* SourceSansPro-Bold-webfont.ttf */; };
@@ -77,6 +78,8 @@
 		025EA630181621D4005F5BCB /* profile-header1@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 025EA62F181621D4005F5BCB /* profile-header1@2x.png */; };
 		025EA632181621DA005F5BCB /* profile-header1-300x460.png in Resources */ = {isa = PBXBuildFile; fileRef = 025EA631181621DA005F5BCB /* profile-header1-300x460.png */; };
 		026213C417F8F84D00C3FF49 /* phone.png in Resources */ = {isa = PBXBuildFile; fileRef = 026213C317F8F84B00C3FF49 /* phone.png */; };
+		026A71EA1829EDE3008589EE /* background-main-320x480.png in Resources */ = {isa = PBXBuildFile; fileRef = 026A71E91829EDE2008589EE /* background-main-320x480.png */; };
+		026A71EC1829F018008589EE /* background-main-320x480@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 026A71EB1829F018008589EE /* background-main-320x480@2x.png */; };
 		026D27F517B9E63D0026D387 /* Icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = 026D27EB17B9E63B0026D387 /* Icon-72.png */; };
 		026D27F617B9E63D0026D387 /* Icon-72@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 026D27EC17B9E63C0026D387 /* Icon-72@2x.png */; };
 		026D27F717B9E63D0026D387 /* Icon-Small-50.png in Resources */ = {isa = PBXBuildFile; fileRef = 026D27ED17B9E63C0026D387 /* Icon-Small-50.png */; };
@@ -244,6 +247,7 @@
 		023F33E816DAC41F00D4845C /* iOSRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iOSRequest.m; sourceTree = "<group>"; };
 		023F33EA16DAC59100D4845C /* NSString+WebService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+WebService.h"; sourceTree = "<group>"; };
 		023F33EB16DAC59100D4845C /* NSString+WebService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+WebService.m"; sourceTree = "<group>"; };
+		0243721818224334006D8959 /* navbar-background-ios7.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "navbar-background-ios7.png"; sourceTree = "<group>"; };
 		02447FC916E5CE3400BD893E /* navbar-background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "navbar-background.png"; sourceTree = "<group>"; };
 		02467A25170E8E5A00E120E9 /* SourceSansPro-Regular-webfont.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "SourceSansPro-Regular-webfont.ttf"; path = "../../source-sans-pro-fontfacekit-spanish 2/SourceSansPro-Regular-webfont.ttf"; sourceTree = "<group>"; };
 		02467A27170E8EAA00E120E9 /* SourceSansPro-Bold-webfont.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "SourceSansPro-Bold-webfont.ttf"; path = "../../source-sans-pro-fontfacekit-spanish 2/SourceSansPro-Bold-webfont.ttf"; sourceTree = "<group>"; };
@@ -261,6 +265,8 @@
 		025EA62F181621D4005F5BCB /* profile-header1@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "profile-header1@2x.png"; sourceTree = "<group>"; };
 		025EA631181621DA005F5BCB /* profile-header1-300x460.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "profile-header1-300x460.png"; sourceTree = "<group>"; };
 		026213C317F8F84B00C3FF49 /* phone.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = phone.png; sourceTree = "<group>"; };
+		026A71E91829EDE2008589EE /* background-main-320x480.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "background-main-320x480.png"; sourceTree = "<group>"; };
+		026A71EB1829F018008589EE /* background-main-320x480@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "background-main-320x480@2x.png"; sourceTree = "<group>"; };
 		026D27EB17B9E63B0026D387 /* Icon-72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon-72.png"; path = "App Icon [Squared]/Icon-72.png"; sourceTree = "<group>"; };
 		026D27EC17B9E63C0026D387 /* Icon-72@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon-72@2x.png"; path = "App Icon [Squared]/Icon-72@2x.png"; sourceTree = "<group>"; };
 		026D27ED17B9E63C0026D387 /* Icon-Small-50.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon-Small-50.png"; path = "App Icon [Squared]/Icon-Small-50.png"; sourceTree = "<group>"; };
@@ -665,6 +671,9 @@
 		028230B016D49164008A38AF /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				026A71EB1829F018008589EE /* background-main-320x480@2x.png */,
+				026A71E91829EDE2008589EE /* background-main-320x480.png */,
+				0243721818224334006D8959 /* navbar-background-ios7.png */,
 				025EA631181621DA005F5BCB /* profile-header1-300x460.png */,
 				025EA62F181621D4005F5BCB /* profile-header1@2x.png */,
 				02E3DAA01814C91300F179B9 /* background-main-320x568@2x.png */,
@@ -943,10 +952,12 @@
 				02348AE81769872D00D2189E /* select-foto.png in Resources */,
 				02348AEB1769887700D2189E /* change-foto.png in Resources */,
 				02348AED1769939E00D2189E /* placeholder-cedula-trasera.png in Resources */,
+				0243721918224334006D8959 /* navbar-background-ios7.png in Resources */,
 				0273457A178BC18B0012F553 /* bottom-button-fade.png in Resources */,
 				02081791178D1FC000E8D28F /* placeholder-crendencial-trasera.png in Resources */,
 				02081792178D1FC000E8D28F /* placeholder-crendencial-front.png in Resources */,
 				02081795178D20E600E8D28F /* change-foto-credencial.png in Resources */,
+				026A71EA1829EDE3008589EE /* background-main-320x480.png in Resources */,
 				02081796178D20E600E8D28F /* select-foto-credencial.png in Resources */,
 				02E804B817920CEB00921E01 /* placeholder-imagen-galeria.png in Resources */,
 				02E804B917920CEB00921E01 /* placeholder-imagen-perfil.png in Resources */,
@@ -961,6 +972,7 @@
 				026D27FA17B9E63D0026D387 /* Icon-Small@2x.png in Resources */,
 				026D27FB17B9E63D0026D387 /* Icon.png in Resources */,
 				026D27FC17B9E63D0026D387 /* Icon@2x.png in Resources */,
+				026A71EC1829F018008589EE /* background-main-320x480@2x.png in Resources */,
 				026D27FD17B9E63D0026D387 /* iTunesArtwork.png in Resources */,
 				026D27FE17B9E63D0026D387 /* iTunesArtwork@2x.png in Resources */,
 				02DB3AF617F7421600DD7AB9 /* slide-sign.png in Resources */,
