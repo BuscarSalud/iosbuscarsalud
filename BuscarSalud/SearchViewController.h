@@ -33,6 +33,7 @@
 
 @property (weak, nonatomic) IBOutlet UILabel *specialtyLabel;
 @property (weak, nonatomic) IBOutlet UILabel *tapLabel;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *buttonTopConstraint;
 
 
 
