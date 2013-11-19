@@ -33,7 +33,7 @@
     double lon;
 }
 
-@synthesize specialtyNameLabel, receiveDisplay, receiveName, tabBarController, latitude, longitude, sidebarButton, specialtyLabel, tapLabel;
+@synthesize specialtyNameLabel, receiveDisplay, receiveName, tabBarController, latitude, longitude, sidebarButton, specialtyLabel, tapLabel, buttonTopConstraint;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -51,11 +51,26 @@
     //[self setNeedsStatusBarAppearanceUpdate];
     self.navigationController.navigationBarHidden = YES;
     
-    if (IS_WIDESCREEN) {
-        self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-320x568.png"]];
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0)
+    {
+        if (IS_WIDESCREEN) {
+            self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-320x568-ios7.png"]];
+            NSLog(@"El nuevo");
+        }else{
+            self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-320x460-ios7.png"]];
+            NSLog(@"El viejito");
+        }
     }else{
-        self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-320x460.png"]];
+        if (IS_WIDESCREEN) {
+            self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-320x568.png"]];
+            NSLog(@"El nuevo");
+        }else{
+            self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-320x460.png"]];
+            NSLog(@"El viejito");
+        }
     }
+    
+    
     
     if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0)
     {
@@ -99,25 +114,58 @@
 -(void) willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
 {
     if (toInterfaceOrientation == UIInterfaceOrientationLandscapeLeft) {
-        NSLog(@"Landscape left");
-        if (IS_WIDESCREEN) {
-            self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-568x320.png"]];
+        NSLog(@"Landscape left remove constraint");
+        [[self buttonTopConstraint] setConstant:168];
+        if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0)
+        {
+            if (IS_WIDESCREEN) {
+                self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-568x320-ios7.png"]];
+            }else{
+                self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-460x320-ios7.png"]];
+            }
         }else{
-            self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-460x320.png"]];
+            if (IS_WIDESCREEN) {
+                self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-568x320.png"]];
+            }else{
+                self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-460x320.png"]];
+            }
         }
     } else if (toInterfaceOrientation == UIInterfaceOrientationLandscapeRight) {
         NSLog(@"Landscape right");
-        if (IS_WIDESCREEN) {
-            self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-568x320.png"]];
+        if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0)
+        {
+            if (IS_WIDESCREEN) {
+                self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-568x320-ios7.png"]];
+            }else{
+                self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-460x320-ios7.png"]];
+            }
         }else{
-            self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-460x320.png"]];
+            if (IS_WIDESCREEN) {
+                self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-568x320.png"]];
+            }else{
+                self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-460x320.png"]];
+            }
         }
     } else if (toInterfaceOrientation == UIInterfaceOrientationPortrait) {
         NSLog(@"Portrait");
-        if (IS_WIDESCREEN) {
-            self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-320x568.png"]];
+        [[self buttonTopConstraint] setConstant:204];
+        if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0)
+        {
+            if (IS_WIDESCREEN) {
+                self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-320x568-ios7.png"]];
+                NSLog(@"El nuevo");
+            }else{
+                self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-320x460-ios7.png"]];
+                NSLog(@"El viejito");
+            }
         }else{
-            self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-320x460.png"]];
+            if (IS_WIDESCREEN) {
+                self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-320x568.png"]];
+                NSLog(@"El nuevo");
+            }else{
+                self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-320x460.png"]];
+                NSLog(@"El viejito");
+            }
         }
     }
 }
@@ -159,7 +207,25 @@
     UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
     
     if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0) {
-        self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-320x480.png"]];
+        if (orientation == UIInterfaceOrientationLandscapeLeft) {
+            if (IS_WIDESCREEN) {
+                self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-568x320-ios7.png"]];
+            }else{
+                self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-460x320-ios7.png"]];
+            }
+        } else if (orientation == UIInterfaceOrientationLandscapeRight) {
+            if (IS_WIDESCREEN) {
+                self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-568x320-ios7.png"]];
+            }else{
+                self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-460x320-ios7.png"]];
+            }
+        } else if (orientation == UIInterfaceOrientationPortrait) {
+            if (IS_WIDESCREEN) {
+                self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-320x568-ios7.png"]];
+            }else{
+                self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background-main-320x460-ios7.png"]];
+            }
+        }
     }else{
         if (orientation == UIInterfaceOrientationLandscapeLeft) {
             if (IS_WIDESCREEN) {
