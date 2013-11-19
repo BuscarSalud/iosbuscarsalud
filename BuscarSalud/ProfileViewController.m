@@ -177,6 +177,15 @@
     if (IS_WIDESCREEN) {
         [profileHeaderImageView setImage:[UIImage imageNamed:@"profile-header1-300x568.png"]];
         [profileImageConstraintLeft setConstant:108];
+        streetLabelConstraint = [NSLayoutConstraint constraintWithItem:streetLabel
+                                                             attribute:NSLayoutAttributeRight
+                                                             relatedBy:NSLayoutRelationEqual
+                                                                toItem:self.view
+                                                             attribute:NSLayoutAttributeTrailing
+                                                            multiplier:1.0
+                                                              constant:-63];
+        [self.view addConstraint:streetLabelConstraint];
+
     }else{
         [profileHeaderImageView setImage:[UIImage imageNamed:@"profile-header1-300x460.png"]];
         
