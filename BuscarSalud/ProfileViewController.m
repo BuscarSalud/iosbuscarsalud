@@ -25,12 +25,25 @@
     NSDictionary *idiomas;
     NSDictionary *experiencia;
     NSDictionary *cedulas;
+    NSMutableArray *dynamicSubviews;
+    NSLayoutConstraint *streetLabelConstraint;
+    NSLayoutConstraint *specialtyLableConstraint;
+    NSLayoutConstraint *coloniaLabelConstraint;
+    NSLayoutConstraint *stateCityConstraint;
+    NSLayoutConstraint *pointsImageViewContainterConstraint;
+    UIImage *pointsContainerImage;
+    UIImageView *pointsImageView;
+    UIView *innerDynamicDataContainer;
+
     int limit;
     int baseLineVariable;
     int fl;
     BOOL landscape;
+    int marginItemConstant;
+    
 }
 
+#define IS_WIDESCREEN ( [ [ UIScreen mainScreen ] bounds ].size.height == 568 )
 #define BASE_LINE 150
 #define BASE_SEPARATOR 8
 #define BASE_HEADING 13
@@ -41,13 +54,13 @@
 #define BASE_SEPARATOR_ITEM 6
 #define ITEM_HEIGHT 12
 #define HEADING_HEIGHT 20
-#define MARGIN_HEADING 15
-#define MARGIN_ITEM 15
+//#define marginHeading 15
+//#define marginItem 15
 #define MARGIN_SECOND_ITEM 210
 @end
 
 @implementation ProfileViewController
-@synthesize nidReceived, phoneLabel, imageProfile, streetLabel, coloniaLabel, specialtyLabel, fromMap, subTitleLabel, stateLabel, navBar, mapButton, sendMail, phoneImageView, profileHeaderImageView, profileImageConstraintLeft, stateLabelConstraintLeft, profileHeaderWidthConstraint;
+@synthesize nidReceived, phoneLabel, imageProfile, streetLabel, coloniaLabel, specialtyLabel, fromMap, subTitleLabel, stateLabel, navBar, mapButton, sendMail, phoneImageView, profileHeaderImageView, profileImageConstraintLeft, stateLabelConstraintLeft, scrollerBottomConstraint, scrollerDynamicContentView, emailButtonRightConstraint, pointsContainerLeftConstraint, pointsContainerView;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -61,9 +74,13 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
     landscape = NO;
     
-    
+    pointsContainerImage = [UIImage imageNamed:@"points-container.png"];
+    pointsImageView = [[UIImageView alloc]initWithImage:pointsContainerImage];
+    pointsContainerView.alpha = 0.0;
+
     
     // Create a view of the standard size at the top of the screen.
     // Available AdSize constants are explained in GADAdSize.h.
@@ -141,106 +158,152 @@
     
 }
 
+-(void)viewDidLayoutSubviews{
+    if (landscape) {
+        innerDynamicDataContainer.frame = CGRectMake(80, 150, scrollerDynamicContentView.frame.size.width, limit);
+        [emailButtonRightConstraint setConstant:58];
+        [pointsContainerLeftConstraint setConstant:159];
+    }else{
+        innerDynamicDataContainer.frame = CGRectMake(0, 150, scrollerDynamicContentView.frame.size.width, limit);
+        [emailButtonRightConstraint setConstant:16];
+    }
+    
+    scrollerDynamicContentView.frame = CGRectMake(0, 0, scroller.frame.size.width, innerDynamicDataContainer.frame.size.height + 160);
 
--(void) willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+    [scroller setContentSize:CGSizeMake(320, scrollerDynamicContentView.frame.size.height)];
+}
+
+-(void)handleInterfaceOrientation{
+    if (IS_WIDESCREEN) {
+        [profileHeaderImageView setImage:[UIImage imageNamed:@"profile-header1-300x568.png"]];
+        [profileImageConstraintLeft setConstant:108];
+    }else{
+        [profileHeaderImageView setImage:[UIImage imageNamed:@"profile-header1-300x460.png"]];
+        
+        [profileImageConstraintLeft setConstant:62];
+        
+        streetLabelConstraint = [NSLayoutConstraint constraintWithItem:streetLabel
+                                                             attribute:NSLayoutAttributeRight
+                                                             relatedBy:NSLayoutRelationEqual
+                                                                toItem:self.view
+                                                             attribute:NSLayoutAttributeTrailing
+                                                            multiplier:1.0
+                                                              constant:-63];
+        [self.view addConstraint:streetLabelConstraint];
+        
+        specialtyLableConstraint = [NSLayoutConstraint constraintWithItem:specialtyLabel
+                                                                attribute:NSLayoutAttributeRight
+                                                                relatedBy:NSLayoutRelationEqual
+                                                                   toItem:self.view
+                                                                attribute:NSLayoutAttributeTrailing
+                                                               multiplier:1.0
+                                                                 constant:-63];
+        [self.view addConstraint:specialtyLableConstraint];
+        
+        coloniaLabelConstraint = [NSLayoutConstraint constraintWithItem:coloniaLabel
+                                                              attribute:NSLayoutAttributeRight
+                                                              relatedBy:NSLayoutRelationEqual
+                                                                 toItem:self.view
+                                                              attribute:NSLayoutAttributeTrailing
+                                                             multiplier:1.0
+                                                               constant:-63];
+        [self.view addConstraint:coloniaLabelConstraint];
+        
+        stateCityConstraint = [NSLayoutConstraint constraintWithItem:stateLabel
+                                                           attribute:NSLayoutAttributeRight
+                                                           relatedBy:NSLayoutRelationEqual
+                                                              toItem:self.view
+                                                           attribute:NSLayoutAttributeTrailing
+                                                          multiplier:1.0
+                                                            constant:-63];
+        [self.view addConstraint:stateCityConstraint];
+        
+        [[self phoneImageConstraint] setConstant:140];
+    }
+    [[self scrollerBottomConstraint] setConstant:37];
+}
+
+-(void) willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
 {
-    [self.view removeConstraint:profileHeaderWidthConstraint];
+    [bannerView_ removeFromSuperview];
     if (toInterfaceOrientation == UIInterfaceOrientationLandscapeLeft) {
         NSLog(@"Landscape left");
-        [profileHeaderImageView setImage:[UIImage imageNamed:@"profile-header1-300x460.png"]];
-        [self.view addConstraint:
-         [NSLayoutConstraint constraintWithItem:profileHeaderImageView
-                                      attribute:NSLayoutAttributeRight
-                                      relatedBy:NSLayoutRelationEqual
-                                         toItem:self.view
-                                      attribute:NSLayoutAttributeTrailing
-                                     multiplier:1.0
-                                       constant:0]];
-        [self.view removeConstraint:profileImageConstraintLeft];
-        
-        profileImageConstraintLeft = [NSLayoutConstraint constraintWithItem:imageProfile
-                                      attribute:NSLayoutAttributeLeft
-                                      relatedBy:NSLayoutRelationEqual
-                                         toItem:self.view
-                                      attribute:NSLayoutAttributeLeading
-                                     multiplier:1.0
-                                       constant:65];
-        [self.view addConstraint:profileImageConstraintLeft];
-        [self.view removeConstraint:stateLabelConstraintLeft];
-        stateLabelConstraintLeft = [NSLayoutConstraint constraintWithItem:stateLabel
-                                                                attribute:NSLayoutAttributeLeft
-                                                                relatedBy:NSLayoutRelationEqual
-                                                                   toItem:self.view
-                                                                attribute:NSLayoutAttributeLeading
-                                                               multiplier:1.0
-                                                                 constant:280];
-        [self.view addConstraint:stateLabelConstraintLeft];
+        bannerView_ = [[GADBannerView alloc] initWithAdSize:kGADAdSizeSmartBannerLandscape origin:CGPointMake(0.0, 340.0)];
         landscape = YES;
-        [self listSubviewsOfView:scroller];
     } else if (toInterfaceOrientation == UIInterfaceOrientationLandscapeRight) {
         NSLog(@"Landscape right");
-        [profileHeaderImageView setImage:[UIImage imageNamed:@"profile-header1-300x460.png"]];
-        [self.view addConstraint:
-         [NSLayoutConstraint constraintWithItem:profileHeaderImageView
-                                      attribute:NSLayoutAttributeRight
-                                      relatedBy:NSLayoutRelationEqual
-                                         toItem:self.view
-                                      attribute:NSLayoutAttributeTrailing
-                                     multiplier:1.0
-                                       constant:0]];
-        [self.view removeConstraint:profileImageConstraintLeft];
-        
-        profileImageConstraintLeft = [NSLayoutConstraint constraintWithItem:imageProfile
-                                                                  attribute:NSLayoutAttributeLeft
-                                                                  relatedBy:NSLayoutRelationEqual
-                                                                     toItem:self.view
-                                                                  attribute:NSLayoutAttributeLeading
-                                                                 multiplier:1.0
-                                                                   constant:65];
-        [self.view addConstraint:profileImageConstraintLeft];
-        [self.view removeConstraint:stateLabelConstraintLeft];
-        stateLabelConstraintLeft = [NSLayoutConstraint constraintWithItem:stateLabel
-                                                                attribute:NSLayoutAttributeLeft
-                                                                relatedBy:NSLayoutRelationEqual
-                                                                   toItem:self.view
-                                                                attribute:NSLayoutAttributeLeading
-                                                               multiplier:1.0
-                                                                 constant:280];
-        [self.view addConstraint:stateLabelConstraintLeft];
+        bannerView_ = [[GADBannerView alloc] initWithAdSize:kGADAdSizeSmartBannerLandscape origin:CGPointMake(0.0, 340.0)];
         landscape = YES;
-
+    } else if (toInterfaceOrientation == UIInterfaceOrientationPortrait) {
+        NSLog(@"Portrait");
+        landscape = NO;
+        bannerView_ = [[GADBannerView alloc] initWithAdSize:kGADAdSizeSmartBannerPortrait origin:CGPointMake(0.0, 340.0)];
+    }
+    
+    
+    bannerView_.translatesAutoresizingMaskIntoConstraints=NO;
+    
+    bannerView_.adUnitID = @"ca-app-pub-5383770617488734/3234786808";
+    
+    bannerView_.rootViewController = self;
+    
+    [self.view addSubview:bannerView_];
+    
+    // Constraint keeps ad at the bottom of the screen at all times.
+    [self.view addConstraint:
+     [NSLayoutConstraint constraintWithItem:bannerView_
+                                  attribute:NSLayoutAttributeBottom
+                                  relatedBy:NSLayoutRelationEqual
+                                     toItem:self.view
+                                  attribute:NSLayoutAttributeBottom
+                                 multiplier:1.0
+                                   constant:0]];
+    
+    // Constraint keeps ad in the center of the screen at all times.
+    [self.view addConstraint:
+     [NSLayoutConstraint constraintWithItem:bannerView_
+                                  attribute:NSLayoutAttributeCenterX
+                                  relatedBy:NSLayoutRelationEqual
+                                     toItem:self.view
+                                  attribute:NSLayoutAttributeCenterX
+                                 multiplier:1.0
+                                   constant:0]];
+    
+    GADRequest *request = [GADRequest request];
+    
+    // Make the request for a test ad. Put in an identifier for
+    // the simulator as well as any devices you want to receive test ads.
+    /*request.testDevices = [NSArray arrayWithObjects:
+     @"045BB3DE-3CF2-5B56-94AF-85CFDA9C7D1E",
+     nil];*/
+    
+    request.testDevices = [NSArray arrayWithObjects:@"33c1dd26714bf1d45a6e583a9b626399",GAD_SIMULATOR_ID, nil];
+    
+    // Initiate a generic request to load it with an ad.
+    [bannerView_ loadRequest:request];
+    
+    [scroller setScrollEnabled:YES];
+    
+    if (toInterfaceOrientation == UIInterfaceOrientationLandscapeLeft) {
+        NSLog(@"Landscape left");
+        [self handleInterfaceOrientation];
+        landscape = YES;
+    } else if (toInterfaceOrientation == UIInterfaceOrientationLandscapeRight) {
+        NSLog(@"Landscape right");
+        [self handleInterfaceOrientation];
+        landscape = YES;
     } else if (toInterfaceOrientation == UIInterfaceOrientationPortrait) {
         NSLog(@"Portrait");
         [profileHeaderImageView setImage:[UIImage imageNamed:@"profile-header1.png"]];
-        [self.view addConstraint:
-         [NSLayoutConstraint constraintWithItem:profileHeaderImageView
-                                      attribute:NSLayoutAttributeRight
-                                      relatedBy:NSLayoutRelationEqual
-                                         toItem:self.view
-                                      attribute:NSLayoutAttributeTrailing
-                                     multiplier:1.0
-                                       constant:0]];
-        [self.view removeConstraint:profileImageConstraintLeft];
-        
-        profileImageConstraintLeft = [NSLayoutConstraint constraintWithItem:imageProfile
-                                                                  attribute:NSLayoutAttributeLeft
-                                                                  relatedBy:NSLayoutRelationEqual
-                                                                     toItem:self.view
-                                                                  attribute:NSLayoutAttributeLeading
-                                                                 multiplier:1.0
-                                                                   constant:17];
-        [self.view addConstraint:profileImageConstraintLeft];
-        [self.view removeConstraint:stateLabelConstraintLeft];
-        stateLabelConstraintLeft = [NSLayoutConstraint constraintWithItem:stateLabel
-                                                                attribute:NSLayoutAttributeLeft
-                                                                relatedBy:NSLayoutRelationEqual
-                                                                   toItem:self.view
-                                                                attribute:NSLayoutAttributeLeading
-                                                               multiplier:1.0
-                                                                 constant:167];
-        [self.view addConstraint:stateLabelConstraintLeft];
+        [profileImageConstraintLeft setConstant:17];
+        [streetLabelConstraint setConstant:-20];
+        [specialtyLableConstraint setConstant:-20];
+        [coloniaLabelConstraint setConstant:-20];
+        [stateCityConstraint setConstant:-20];
+        [[self phoneImageConstraint] setConstant:70];
+        [[self scrollerBottomConstraint] setConstant:55];
+        [pointsContainerLeftConstraint setConstant:114];
         landscape = NO;
-
     }
 
 }
@@ -256,6 +319,7 @@
     for (UIView *subview in subviews) {
         
         NSLog(@"%@", subview);
+        [subview removeFromSuperview];
         
         // List the subviews of subview
         [self listSubviewsOfView:subview];
@@ -374,22 +438,16 @@
     }else{
         UIFont *verdanaPoints = [UIFont fontWithName:@"Verdana-Bold" size:12];
         UILabel *pointsLabel = [[UILabel alloc]init];
-        UIImage *pointsContainerImage = [UIImage imageNamed:@"points-container.png"];
-        UIImageView *pointsContainerView = [[UIImageView alloc]initWithImage:pointsContainerImage];
-        if (landscape) {
-            pointsContainerView.frame = CGRectMake(114, 163, pointsContainerView.frame.size.width, pointsContainerView.frame.size.height);
-        }else{
-            pointsContainerView.frame = CGRectMake(114, 98, pointsContainerView.frame.size.width, pointsContainerView.frame.size.height);
-        }
+        //[pointsContainerView addSubview:pointsImageView];
+        [pointsContainerView addSubview:pointsLabel];
         
         [pointsLabel setText:[_doc objectForKey:@"points"]];
         [pointsLabel setFont:verdanaPoints];
-        pointsLabel.frame = CGRectMake(115, 115, pointsContainerView.frame.size.width - 2, 10);
+        //pointsImageView.frame = CGRectMake(0, 0, pointsImageView.frame.size.width, pointsImageView.frame.size.height);
+        pointsLabel.frame = CGRectMake(0, 18, pointsImageView.frame.size.width - 2, 10);
         pointsLabel.textAlignment = NSTextAlignmentCenter;
         [pointsLabel setBackgroundColor:[UIColor clearColor]];
         [pointsLabel setTextColor:[UIColor colorWithRed:104.0/255.0 green:174.0/255.0 blue:100.0/255.0 alpha:1.0]];
-        [scroller addSubview:pointsContainerView];
-        [scroller addSubview:pointsLabel];
     }
     
 
@@ -452,7 +510,7 @@
     [UIView setAnimationDelegate:containerView];
     [UIView setAnimationDidStopSelector:@selector(removeFromSuperview)];
     [UIView commitAnimations];
-    [self loadDynamicData];
+    [self loadDynamicData:15 marginHeading:15];
 }
 
 - (void)createInfoDisplay:(NSDictionary *)info{
@@ -497,10 +555,10 @@
 
     
     [scroller setScrollEnabled:YES];
-    [scroller setContentSize:CGSizeMake(320, limit)];
+    //4[scroller setContentSize:CGSizeMake(320, limit)];
     
-    scroller.layer.borderWidth = 1;
-    scroller.layer.borderColor = [UIColor blackColor].CGColor;
+    //scroller.layer.borderWidth = 1;
+    //scroller.layer.borderColor = [UIColor blackColor].CGColor;
     
 }
 
@@ -510,8 +568,12 @@
     
 }
 
--(void)loadDynamicData
+-(void)loadDynamicData:(int)marginItem marginHeading:(int)marginHeading
 {
+    dynamicSubviews = [[NSMutableArray alloc]init];
+    innerDynamicDataContainer = [[UIView alloc]initWithFrame:CGRectMake(0, 160, scrollerDynamicContentView.frame.size.width, 10)];
+    [scrollerDynamicContentView addSubview:innerDynamicDataContainer];
+    limit = 0;
     UIFont *sourceSansProSemiboldHeader = [UIFont fontWithName:@"SourceSansPro-Semibold" size:16];
     UIFont *verdana = [UIFont fontWithName:@"Verdana" size:10];
     UIImage *separatorImage = [UIImage imageNamed:@"line-divider-profile.png"];
@@ -519,9 +581,11 @@
     
     if ([[doctorInfo objectForKey:@"email"] isKindOfClass:[NSNull class]]){
         NSLog(@"No Email");
-        baseLineVariable = 150;
+        //baseLineVariable = 150;
+        baseLineVariable = 0;
     }else{
-        baseLineVariable = BASE_LINE + 18;
+        //baseLineVariable = BASE_LINE + 18;
+        baseLineVariable = 25;
         [UIView beginAnimations:nil context:nil];
         [UIView setAnimationDelay:0.1];
         [UIView setAnimationDuration:0.4];
@@ -537,8 +601,8 @@
         [subtitleLabel setFont:verdana];
         [subtitleLabel setText:[doctorInfo objectForKey:@"subtitle"]];
         [subtitleLabel setAlpha:0.0];
-        [scroller addSubview:subtitleLabel];
-        subtitleLabel.frame = CGRectMake(MARGIN_ITEM, baseLineVariable, separatorViewEducation.frame.size.width, ITEM_HEIGHT);
+        [innerDynamicDataContainer addSubview:subtitleLabel];
+        subtitleLabel.frame = CGRectMake(marginItem, baseLineVariable, separatorViewEducation.frame.size.width, ITEM_HEIGHT);
         fl = 1;
         subtitleLabel.numberOfLines = 0;
         [subtitleLabel sizeToFit];
@@ -548,6 +612,7 @@
         [UIView setAnimationDuration:0.4];
         [subtitleLabel setAlpha:1.0];
         [UIView commitAnimations];
+        [dynamicSubviews addObject:subtitleLabel];
     }
     
     if (![[doctorInfo objectForKey:@"summary"] isKindOfClass:[NSNull class]]) {
@@ -555,12 +620,12 @@
         [summaryLabel setFont:verdana];
         [summaryLabel setText:[doctorInfo objectForKey:@"summary"]];
         [summaryLabel setAlpha:0.0];
-        [scroller addSubview:summaryLabel];
+        [innerDynamicDataContainer addSubview:summaryLabel];
         if (fl == 1) {
-            summaryLabel.frame = CGRectMake(MARGIN_ITEM, limit, separatorViewEducation.frame.size.width, ITEM_HEIGHT);
+            summaryLabel.frame = CGRectMake(marginItem, limit, separatorViewEducation.frame.size.width, ITEM_HEIGHT);
             limit = limit + BASE_ITEMS;
         }else{
-            summaryLabel.frame = CGRectMake(MARGIN_ITEM, baseLineVariable, separatorViewEducation.frame.size.width, ITEM_HEIGHT);
+            summaryLabel.frame = CGRectMake(marginItem, baseLineVariable, separatorViewEducation.frame.size.width, ITEM_HEIGHT);
             limit = limit + baseLineVariable;
             fl = 1;
         }
@@ -572,6 +637,7 @@
         [UIView setAnimationDuration:0.4];
         [summaryLabel setAlpha:1.0];
         [UIView commitAnimations];
+        [dynamicSubviews addObject:summaryLabel];
     }else{
         if (fl == 1) {
             limit = limit + 5;
@@ -583,12 +649,12 @@
         [stateSubtitleLabel setFont:verdana];
         [stateSubtitleLabel setText:[doctorInfo objectForKey:@"state"]];
         [stateSubtitleLabel setAlpha:0.0];
-        [scroller addSubview:stateSubtitleLabel];
+        [innerDynamicDataContainer addSubview:stateSubtitleLabel];
         if (fl == 1) {
-            stateSubtitleLabel.frame = CGRectMake(MARGIN_ITEM, limit, separatorViewEducation.frame.size.width, ITEM_HEIGHT);
+            stateSubtitleLabel.frame = CGRectMake(marginItem, limit, separatorViewEducation.frame.size.width, ITEM_HEIGHT);
             limit = limit + BASE_ITEMS + 5;
         }else{
-            stateSubtitleLabel.frame = CGRectMake(MARGIN_ITEM, baseLineVariable, separatorViewEducation.frame.size.width, ITEM_HEIGHT);
+            stateSubtitleLabel.frame = CGRectMake(marginItem, baseLineVariable, separatorViewEducation.frame.size.width, ITEM_HEIGHT);
             limit = baseLineVariable + BASE_ITEMS + 5;
             fl = 1;
         }
@@ -597,6 +663,7 @@
         [UIView setAnimationDuration:0.4];
         [stateSubtitleLabel setAlpha:1.0];
         [UIView commitAnimations];
+        [dynamicSubviews addObject:stateSubtitleLabel];
     }
 
     if (![[doctorInfo objectForKey:@"specialty"] isKindOfClass:[NSNull class]]) {
@@ -604,12 +671,12 @@
         [specialtySubtitleLabel setFont:verdana];
         [specialtySubtitleLabel setText:[doctorInfo objectForKey:@"specialty"]];
         [specialtySubtitleLabel setAlpha:0.0];
-        [scroller addSubview:specialtySubtitleLabel];
+        [innerDynamicDataContainer addSubview:specialtySubtitleLabel];
         if (fl == 1 ){
-            specialtySubtitleLabel.frame = CGRectMake(MARGIN_ITEM, limit, separatorViewEducation.frame.size.width, ITEM_HEIGHT);
+            specialtySubtitleLabel.frame = CGRectMake(marginItem, limit, separatorViewEducation.frame.size.width, ITEM_HEIGHT);
             limit = limit + BASE_BLOCK;
         }else{
-            specialtySubtitleLabel.frame = CGRectMake(MARGIN_ITEM, baseLineVariable, separatorViewEducation.frame.size.width, ITEM_HEIGHT);
+            specialtySubtitleLabel.frame = CGRectMake(marginItem, baseLineVariable, separatorViewEducation.frame.size.width, ITEM_HEIGHT);
             limit = limit + baseLineVariable;
             fl = 1;
         }
@@ -618,6 +685,7 @@
         [UIView setAnimationDuration:0.4];
         [specialtySubtitleLabel setAlpha:1.0];
         [UIView commitAnimations];
+        [dynamicSubviews addObject:specialtySubtitleLabel];
     }
     
     
@@ -633,15 +701,17 @@
     [educacionLabel setFont:sourceSansProSemiboldHeader];
     educacionLabel.backgroundColor = [UIColor clearColor];
     [educacionLabel setTextColor:[UIColor colorWithRed:104.0/255.0 green:164.0/255.0 blue:100.0/255.0 alpha:1.0]];
-    [scroller addSubview:educacionLabel];
-    [scroller addSubview:separatorViewEducation];
+    [innerDynamicDataContainer addSubview:educacionLabel];
+    [innerDynamicDataContainer addSubview:separatorViewEducation];
+    [dynamicSubviews addObject:educacionLabel];
+    [dynamicSubviews addObject:separatorViewEducation];
     [educacionLabel setAlpha:0.0];
     [separatorViewEducation setAlpha:0.0];
     if (fl == 1){
-        educacionLabel.frame = CGRectMake(MARGIN_HEADING, limit, 100, HEADING_HEIGHT);
+        educacionLabel.frame = CGRectMake(marginHeading, limit, 100, HEADING_HEIGHT);
         limit = limit + BASE_HEADING;
     }else{
-        educacionLabel.frame = CGRectMake(MARGIN_HEADING, baseLineVariable, 100, HEADING_HEIGHT);
+        educacionLabel.frame = CGRectMake(marginHeading, baseLineVariable, 100, HEADING_HEIGHT);
         limit = baseLineVariable + BASE_HEADING;
     }
     separatorViewEducation.frame = CGRectMake(9, limit, separatorViewEducation.frame.size.width, separatorViewEducation.frame.size.height);
@@ -673,9 +743,12 @@
         [educationSchoolItem setAlpha:0.0];
         [educationYearItem setAlpha:0.0];
         
-        [scroller addSubview:educationDegreeItem];
-        [scroller addSubview:educationSchoolItem];
-        [scroller addSubview:educationYearItem];
+        [innerDynamicDataContainer addSubview:educationDegreeItem];
+        [innerDynamicDataContainer addSubview:educationSchoolItem];
+        [innerDynamicDataContainer addSubview:educationYearItem];
+        [dynamicSubviews addObject:educationDegreeItem];
+        [dynamicSubviews addObject:educationSchoolItem];
+        [dynamicSubviews addObject:educationYearItem];
 
         
         if (cedulaCounter == 0) {
@@ -684,18 +757,19 @@
             if (cedulaCounter < [[doctorInfo objectForKey:@"cedulas"] count]) {
                 limit = limit + BASE_ITEMS;
                 [separatorViewItems setAlpha:0.0];
-                [scroller addSubview:separatorViewItems];
+                [innerDynamicDataContainer addSubview:separatorViewItems];
+                [dynamicSubviews addObject:separatorViewItems];
                 separatorViewItems.frame = CGRectMake(9, limit, separatorViewItems.frame.size.width, separatorViewItems.frame.size.height);
                 limit = limit + BASE_SEPARATOR_ITEM + 5;
             }
         }
-        educationDegreeItem.frame = CGRectMake(MARGIN_ITEM, limit, separatorViewEducation.frame.size.width, ITEM_HEIGHT);
+        educationDegreeItem.frame = CGRectMake(marginItem, limit, separatorViewEducation.frame.size.width, ITEM_HEIGHT);
         limit = limit + BASE_ITEMS;
-        educationSchoolItem.frame = CGRectMake(MARGIN_ITEM, limit, separatorViewEducation.frame.size.width, ITEM_HEIGHT);
+        educationSchoolItem.frame = CGRectMake(marginItem, limit, separatorViewEducation.frame.size.width, ITEM_HEIGHT);
         educationSchoolItem.numberOfLines = 0;
         [educationSchoolItem sizeToFit];
         limit = limit + educationSchoolItem.frame.size.height;
-        educationYearItem.frame = CGRectMake(MARGIN_ITEM, limit, separatorViewEducation.frame.size.width, ITEM_HEIGHT);
+        educationYearItem.frame = CGRectMake(marginItem, limit, separatorViewEducation.frame.size.width, ITEM_HEIGHT);
         
         if (cedulaCounter < [[cedulaItems objectForKey:@"cedulas"] count]) {
             limit = limit + educationYearItem.frame.size.height + 15;
@@ -725,11 +799,13 @@
     [languagesHeaderLabel setFont:sourceSansProSemiboldHeader];
     languagesHeaderLabel.backgroundColor = [UIColor clearColor];
     [languagesHeaderLabel setTextColor:[UIColor colorWithRed:104.0/255.0 green:164.0/255.0 blue:100.0/255.0 alpha:1.0]];
-    [scroller addSubview:languagesHeaderLabel];
-    [scroller addSubview:separatorViewLanguages];
+    [innerDynamicDataContainer addSubview:languagesHeaderLabel];
+    [innerDynamicDataContainer addSubview:separatorViewLanguages];
+    [dynamicSubviews addObject:languagesHeaderLabel];
+    [dynamicSubviews addObject:separatorViewLanguages];
     [languagesHeaderLabel setAlpha:0.0];
     [separatorViewLanguages setAlpha:0.0];
-    languagesHeaderLabel.frame = CGRectMake(MARGIN_HEADING, limit, 100, HEADING_HEIGHT);
+    languagesHeaderLabel.frame = CGRectMake(marginHeading, limit, 100, HEADING_HEIGHT);
     limit = limit + BASE_HEADING;
     separatorViewLanguages.frame = CGRectMake(9, limit, separatorViewLanguages.frame.size.width, separatorViewLanguages.frame.size.height);
     //Language Items
@@ -752,8 +828,10 @@
             [languageItem setFont:verdana];
             [languageLevel setFont:verdana];
             
-            [scroller addSubview:languageItem];
-            [scroller addSubview:languageLevel];
+            [innerDynamicDataContainer addSubview:languageItem];
+            [innerDynamicDataContainer addSubview:languageLevel];
+            [dynamicSubviews addObject:languageItem];
+            [dynamicSubviews addObject:languageLevel];
             [languageLevel setAlpha:0.0];
             [languageItem setAlpha:0.0];
             [separatorViewItems setAlpha:0.0];
@@ -761,12 +839,13 @@
                 limit = limit + BASE_SEPARATOR;
             }else{
                 if (i <= [[doctorInfo objectForKey:@"languages"] count]) {
-                    [scroller addSubview:separatorViewItems];
+                    [innerDynamicDataContainer addSubview:separatorViewItems];
+                    [dynamicSubviews addObject:separatorViewItems];
                     separatorViewItems.frame = CGRectMake(9, limit, separatorViewItems.frame.size.width, separatorViewItems.frame.size.height);
                     limit = limit + BASE_SEPARATOR_ITEM;
                 }
             }
-            languageItem.frame = CGRectMake(MARGIN_ITEM, limit, separatorViewLanguages.frame.size.width, ITEM_HEIGHT);
+            languageItem.frame = CGRectMake(marginItem, limit, separatorViewLanguages.frame.size.width, ITEM_HEIGHT);
             languageLevel.frame = CGRectMake(MARGIN_SECOND_ITEM, limit, 160, ITEM_HEIGHT);
             if (i < [[doctorInfo objectForKey:@"languages"] count] - 1) {
                 limit = limit + BASE_ITEM_SEPARATOR;
@@ -796,11 +875,13 @@
     [experienceHeaderLabel setFont:sourceSansProSemiboldHeader];
     experienceHeaderLabel.backgroundColor = [UIColor clearColor];
     [experienceHeaderLabel setTextColor:[UIColor colorWithRed:104.0/255.0 green:164.0/255.0 blue:100.0/255.0 alpha:1.0]];
-    [scroller addSubview:experienceHeaderLabel];
-    [scroller addSubview:separatorViewExperience];
+    [innerDynamicDataContainer addSubview:experienceHeaderLabel];
+    [innerDynamicDataContainer addSubview:separatorViewExperience];
+    [dynamicSubviews addObject:experienceHeaderLabel];
+    [dynamicSubviews addObject:separatorViewExperience];
     [separatorViewExperience setAlpha:0.0];
     [experienceHeaderLabel setAlpha:0.0];
-    experienceHeaderLabel.frame = CGRectMake(MARGIN_HEADING, limit, 100, HEADING_HEIGHT);
+    experienceHeaderLabel.frame = CGRectMake(marginHeading, limit, 100, HEADING_HEIGHT);
     limit = limit + BASE_HEADING;
     separatorViewExperience.frame = CGRectMake(9, limit, separatorViewExperience.frame.size.width, separatorViewExperience.frame.size.height);
     if ([[doctorInfo objectForKey:@"experience"] isKindOfClass:[NSNull class]]){
@@ -838,27 +919,32 @@
             [experienceCompany setAlpha:0.0];
             [experienceDescription setAlpha:0.0];
             [experiencePeriod setAlpha:0.0];
-            [scroller addSubview:experienceTitle];
-            [scroller addSubview:experienceCompany];
-            [scroller addSubview:experienceDescription];
-            [scroller addSubview:experiencePeriod];
+            [innerDynamicDataContainer addSubview:experienceTitle];
+            [innerDynamicDataContainer addSubview:experienceCompany];
+            [innerDynamicDataContainer addSubview:experienceDescription];
+            [innerDynamicDataContainer addSubview:experiencePeriod];
+            [dynamicSubviews addObject:experienceTitle];
+            [dynamicSubviews addObject:experienceCompany];
+            [dynamicSubviews addObject:experienceDescription];
+            [dynamicSubviews addObject:experiencePeriod];
             
             if (i == 0) {
                 limit = limit + BASE_SEPARATOR;
             }else{
                 if (i <= [[doctorInfo objectForKey:@"experience"] count]) {
-                    [scroller addSubview:separatorViewItems];
+                    [innerDynamicDataContainer addSubview:separatorViewItems];
+                    [dynamicSubviews addObject:separatorViewItems];
                     separatorViewItems.frame = CGRectMake(9, limit, separatorViewItems.frame.size.width, separatorViewItems.frame.size.height);
                     limit = limit + BASE_SEPARATOR_ITEM + 5;
                 }
             }
             
-            experienceTitle.frame = CGRectMake(MARGIN_ITEM, limit, 294, ITEM_HEIGHT);
+            experienceTitle.frame = CGRectMake(marginItem, limit, 294, ITEM_HEIGHT);
             experiencePeriod.frame = CGRectMake(MARGIN_SECOND_ITEM, limit, 99, ITEM_HEIGHT);
             limit = limit + BASE_ITEM_SEPARATOR;
-            experienceCompany.frame = CGRectMake(MARGIN_ITEM, limit, 294, ITEM_HEIGHT);
+            experienceCompany.frame = CGRectMake(marginItem, limit, 294, ITEM_HEIGHT);
             limit = limit + BASE_ITEM_SEPARATOR + 3;
-            experienceDescription.frame = CGRectMake(MARGIN_ITEM, limit, separatorViewItems.frame.size.width, experienceDescription.frame.size.height);
+            experienceDescription.frame = CGRectMake(marginItem, limit, separatorViewItems.frame.size.width, experienceDescription.frame.size.height);
             experienceDescription.numberOfLines = 0;
             [experienceDescription sizeToFit];
             //limit = limit + experienceDescription.frame.size.height;
@@ -899,11 +985,13 @@
     [contactInfoHeaderLabel setFont:sourceSansProSemiboldHeader];
     contactInfoHeaderLabel.backgroundColor = [UIColor clearColor];
     [contactInfoHeaderLabel setTextColor:[UIColor colorWithRed:104.0/255.0 green:164.0/255.0 blue:100.0/255.0 alpha:1.0]];
-    [scroller addSubview:contactInfoHeaderLabel];
-    [scroller addSubview:separatorViewContactInfo];
+    [innerDynamicDataContainer addSubview:contactInfoHeaderLabel];
+    [innerDynamicDataContainer addSubview:separatorViewContactInfo];
+    [dynamicSubviews addObject:contactInfoHeaderLabel];
+    [dynamicSubviews addObject:separatorViewContactInfo];
     [separatorViewContactInfo setAlpha:0.0];
     [contactInfoHeaderLabel setAlpha:0.0];
-    contactInfoHeaderLabel.frame = CGRectMake(MARGIN_HEADING, limit, 300, HEADING_HEIGHT);
+    contactInfoHeaderLabel.frame = CGRectMake(marginHeading, limit, 300, HEADING_HEIGHT);
     limit = limit + BASE_HEADING;
     separatorViewContactInfo.frame = CGRectMake(9, limit, separatorViewExperience.frame.size.width, separatorViewExperience.frame.size.height);
     limit = limit + BASE_SEPARATOR;
@@ -914,9 +1002,10 @@
         UILabel *contactInfoNameItem = [[UILabel alloc]init];
         [contactInfoNameItem setText:[doctorInfo objectForKey:@"address_name"]];
         [contactInfoNameItem setFont:verdana];
-        [scroller addSubview:contactInfoNameItem];
+        [innerDynamicDataContainer addSubview:contactInfoNameItem];
+        [dynamicSubviews addObject:contactInfoNameItem];
         [contactInfoNameItem setAlpha:0.0];
-        contactInfoNameItem.frame = CGRectMake(MARGIN_ITEM, limit, separatorViewEducation.frame.size.width, ITEM_HEIGHT);
+        contactInfoNameItem.frame = CGRectMake(marginItem, limit, separatorViewEducation.frame.size.width, ITEM_HEIGHT);
         limit = limit + BASE_ITEMS;
         [UIView beginAnimations:nil context:nil];
         [UIView setAnimationDelay:0.35];
@@ -931,9 +1020,10 @@
         UILabel *contactInfoStreetItem = [[UILabel alloc]init];
         [contactInfoStreetItem setText:[doctorInfo objectForKey:@"street"]];
         [contactInfoStreetItem setFont:verdana];
-        [scroller addSubview:contactInfoStreetItem];
+        [innerDynamicDataContainer addSubview:contactInfoStreetItem];
+        [dynamicSubviews addObject:contactInfoStreetItem];
         [contactInfoStreetItem setAlpha:0.0];
-        contactInfoStreetItem.frame = CGRectMake(MARGIN_ITEM, limit, separatorViewEducation.frame.size.width, ITEM_HEIGHT);
+        contactInfoStreetItem.frame = CGRectMake(marginItem, limit, separatorViewEducation.frame.size.width, ITEM_HEIGHT);
         limit = limit + BASE_ITEMS;
         [UIView beginAnimations:nil context:nil];
         [UIView setAnimationDelay:0.35];
@@ -948,9 +1038,10 @@
         UILabel *contactInfoColoniaItem = [[UILabel alloc]init];
         [contactInfoColoniaItem setText:[doctorInfo objectForKey:@"colonia"]];
         [contactInfoColoniaItem setFont:verdana];
-        [scroller addSubview:contactInfoColoniaItem];
+        [innerDynamicDataContainer addSubview:contactInfoColoniaItem];
+        [dynamicSubviews addObject:contactInfoColoniaItem];
         [contactInfoColoniaItem setAlpha:0.0];
-        contactInfoColoniaItem.frame = CGRectMake(MARGIN_ITEM, limit, separatorViewEducation.frame.size.width, ITEM_HEIGHT);
+        contactInfoColoniaItem.frame = CGRectMake(marginItem, limit, separatorViewEducation.frame.size.width, ITEM_HEIGHT);
         limit = limit + BASE_ITEMS;
         [UIView beginAnimations:nil context:nil];
         [UIView setAnimationDelay:0.35];
@@ -965,9 +1056,10 @@
         UILabel *contactInfoLocalityItem = [[UILabel alloc]init];
         [contactInfoLocalityItem setText:[doctorInfo objectForKey:@"locality"]];
         [contactInfoLocalityItem setFont:verdana];
-        [scroller addSubview:contactInfoLocalityItem];
+        [innerDynamicDataContainer addSubview:contactInfoLocalityItem];
+        [dynamicSubviews addObject:contactInfoLocalityItem];
         [contactInfoLocalityItem setAlpha:0.0];
-        contactInfoLocalityItem.frame = CGRectMake(MARGIN_ITEM, limit, separatorViewEducation.frame.size.width, ITEM_HEIGHT);
+        contactInfoLocalityItem.frame = CGRectMake(marginItem, limit, separatorViewEducation.frame.size.width, ITEM_HEIGHT);
         limit = limit + BASE_ITEMS;
         [UIView beginAnimations:nil context:nil];
         [UIView setAnimationDelay:0.35];
@@ -982,9 +1074,10 @@
         UILabel *contactInfoPostalCodeItem = [[UILabel alloc]init];
         [contactInfoPostalCodeItem setText:[doctorInfo objectForKey:@"postal_code"]];
         [contactInfoPostalCodeItem setFont:verdana];
-        [scroller addSubview:contactInfoPostalCodeItem];
+        [innerDynamicDataContainer addSubview:contactInfoPostalCodeItem];
+        [dynamicSubviews addObject:contactInfoPostalCodeItem];
         [contactInfoPostalCodeItem setAlpha:0.0];
-        contactInfoPostalCodeItem.frame = CGRectMake(MARGIN_ITEM, limit, separatorViewEducation.frame.size.width, ITEM_HEIGHT);
+        contactInfoPostalCodeItem.frame = CGRectMake(marginItem, limit, separatorViewEducation.frame.size.width, ITEM_HEIGHT);
         limit = limit + BASE_ITEMS;
         [UIView beginAnimations:nil context:nil];
         [UIView setAnimationDelay:0.35];
@@ -1000,7 +1093,31 @@
     [contactInfoHeaderLabel setAlpha:1.0];
     [UIView commitAnimations];
     
-    [scroller setContentSize:CGSizeMake(320, limit + 10)];
+    [[self pointsContainerLeftConstraint] setConstant:118];
+    [UIView animateWithDuration:0.2
+                          delay:0.7
+                        options:(UIViewAnimationOptionCurveLinear | UIViewAnimationOptionAllowUserInteraction)
+                     animations:^{
+                         pointsContainerView.alpha = 1.0;
+                         [[self pointsContainerView] layoutIfNeeded];
+                     }
+                     completion:^(BOOL finished){
+                         [[self pointsContainerLeftConstraint] setConstant:114];
+                         [UIView animateWithDuration:0.2
+                                          animations:^{
+                                          [[self pointsContainerView]layoutIfNeeded];
+                                          }
+                          ];
+                     }
+     ];
+    
+    NSLog(@"Adentro dynamicData ------ Valor de Limit = %d", limit);
+    NSLog(@"Adentro scroller = %@", scroller);
+    innerDynamicDataContainer.frame = CGRectMake(0, 150, scrollerDynamicContentView.frame.size.width, limit);
+    scrollerDynamicContentView.frame = CGRectMake(0, 0, scroller.frame.size.width, innerDynamicDataContainer.frame.size.height + 160);
+    
+    NSLog(@"Adentro scrollerDynamicContetView = %@", scrollerDynamicContentView);
+    [scroller setContentSize:CGSizeMake(320, scrollerDynamicContentView.frame.size.height)];
 }
 
 - (void)adViewDidReceiveAd:(GADBannerView *)bannerView {
