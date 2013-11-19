@@ -59,7 +59,7 @@
 @end
 
 @implementation DoctorResultsViewController
-@synthesize latitudeUser, longitudeUser, specialtyString, myTableView, myNavigation, subTitleLabel, subtitleString, layerPosition, mapButton, backButton, topNavBar, stat, specialities, searchButton, sortingControl, displayLabel, statesDictionary, picker,pickerViewContainer, optionsTable, optionLabelInPickerView, pickerStates, silderImageView, mainView, loadMoreDataImage;
+@synthesize latitudeUser, longitudeUser, specialtyString, myTableView, myNavigation, subTitleLabel, subtitleString, layerPosition, mapButton, backButton, topNavBar, stat, specialities, searchButton, sortingControl, displayLabel, statesDictionary, picker,pickerViewContainer, optionsTable, optionLabelInPickerView, pickerStates, silderImageView, mainView, loadMoreDataImage, loadMoreImageConstraint;
 
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -266,11 +266,14 @@
     if (toInterfaceOrientation == UIInterfaceOrientationLandscapeLeft) {
         NSLog(@"Landscape left");
         bannerView_ = [[GADBannerView alloc] initWithAdSize:kGADAdSizeSmartBannerLandscape origin:CGPointMake(0.0, 340.0)];
+        landscape = YES;
     } else if (toInterfaceOrientation == UIInterfaceOrientationLandscapeRight) {
         NSLog(@"Landscape right");
         bannerView_ = [[GADBannerView alloc] initWithAdSize:kGADAdSizeSmartBannerLandscape origin:CGPointMake(0.0, 340.0)];
+        landscape = YES;
     } else if (toInterfaceOrientation == UIInterfaceOrientationPortrait) {
         NSLog(@"Portrait");
+        landscape = NO;
         bannerView_ = [[GADBannerView alloc] initWithFrame:CGRectMake(0.0,
                                                                       361.0,
                                                                       GAD_SIZE_320x50.width,
@@ -515,13 +518,12 @@
                                    atScrollPosition:UITableViewScrollPositionNone
                                            animated:YES];
                 myTableView.hidden = NO;
-                [UIView beginAnimations:nil context:nil];
-                [UIView setAnimationDuration:0.3];
-                [UIView setAnimationDelay:1.0];
-                loadMoreDataImage.frame = CGRectMake(15, 460, 290, 50);
-                [loadMoreDataImage setAlpha:0.0];
-                [UIView commitAnimations];
-                //[loadMoreDataImage setAlpha:0.0];
+                
+                [[self loadMoreImageConstraint] setConstant:-36];
+                [UIView animateWithDuration:0.5 animations:^{
+                    [[self loadMoreDataImage] layoutIfNeeded];
+                }];
+                
             } else{
                 if (_userStatic != categories) {
                     _userStatic = categories;
@@ -664,10 +666,18 @@
             pageNumber++;
             
             [loadMoreDataImage setAlpha:1.0];
-            [UIView beginAnimations:nil context:nil];
-            [UIView setAnimationDuration:0.3];
-            loadMoreDataImage.frame = CGRectMake(15, 360, 290, 50);
-            [UIView commitAnimations];
+            
+            if (landscape == YES) {
+                [[self loadMoreImageConstraint] setConstant:32];
+                [UIView animateWithDuration:0.7 animations:^{
+                    [[self loadMoreDataImage] layoutIfNeeded];
+                }];
+            }else{
+                [[self loadMoreImageConstraint] setConstant:50];
+                [UIView animateWithDuration:0.7 animations:^{
+                    [[self loadMoreDataImage] layoutIfNeeded];
+                }];
+            }
             
             if (requestFromSearchButton == YES) {
                 [self getLocations:[latitudeUser stringValue] andLongitude:[longitudeUser stringValue] andSpecialty:specialtyString andState:selectedStateTid andOrder:@""];
