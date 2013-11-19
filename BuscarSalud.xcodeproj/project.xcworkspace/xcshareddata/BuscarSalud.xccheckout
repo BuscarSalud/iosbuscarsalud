@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>902086A1-86F2-42C2-A0F6-4C5B14CAF0C3</string>
+	<key>IDESourceControlProjectName</key>
+	<string>BuscarSalud</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>87D7CDD8-FF02-4870-8509-86546B148380</key>
+		<string>ssh://github.com/BuscarSalud/iosbuscarsalud.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>BuscarSalud.xcodeproj/project.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>87D7CDD8-FF02-4870-8509-86546B148380</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>ssh://github.com/BuscarSalud/iosbuscarsalud.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>87D7CDD8-FF02-4870-8509-86546B148380</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>87D7CDD8-FF02-4870-8509-86546B148380</string>
+			<key>IDESourceControlWCCName</key>
+			<string>BuscarSalud</string>
+		</dict>
+	</array>
+</dict>
+</plist>
