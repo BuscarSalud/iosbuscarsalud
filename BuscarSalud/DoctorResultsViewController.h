@@ -57,6 +57,7 @@
 @property (weak, nonatomic) IBOutlet UIPickerView *pickerStates;
 @property (weak, nonatomic) IBOutlet UIImageView *silderImageView;
 @property (weak, nonatomic) IBOutlet UIView *mainView;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *loadMoreImageConstraint;
 
 
 - (IBAction)searchButton:(id)sender;
