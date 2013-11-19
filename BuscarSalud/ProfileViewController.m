@@ -60,7 +60,7 @@
 @end
 
 @implementation ProfileViewController
-@synthesize nidReceived, phoneLabel, imageProfile, streetLabel, coloniaLabel, specialtyLabel, fromMap, subTitleLabel, stateLabel, navBar, mapButton, sendMail, phoneImageView, profileHeaderImageView, profileImageConstraintLeft, stateLabelConstraintLeft, scrollerBottomConstraint, scrollerDynamicContentView, emailButtonRightConstraint, pointsContainerLeftConstraint, pointsContainerView;
+@synthesize nidReceived, phoneLabel, imageProfile, streetLabel, coloniaLabel, specialtyLabel, fromMap, subTitleLabel, stateLabel, navBar, mapButton, sendMail, phoneImageView, profileHeaderImageView, profileImageConstraintLeft, stateLabelConstraintLeft, scrollerBottomConstraint, scrollerDynamicContentView, emailButtonRightConstraint, pointsContainerLeftConstraint, pointsContainerView; 
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -161,15 +161,10 @@
 -(void)viewDidLayoutSubviews{
     if (landscape) {
         innerDynamicDataContainer.frame = CGRectMake(80, 150, scrollerDynamicContentView.frame.size.width, limit);
-        [emailButtonRightConstraint setConstant:58];
-        [pointsContainerLeftConstraint setConstant:159];
     }else{
         innerDynamicDataContainer.frame = CGRectMake(0, 150, scrollerDynamicContentView.frame.size.width, limit);
-        [emailButtonRightConstraint setConstant:16];
     }
-    
     scrollerDynamicContentView.frame = CGRectMake(0, 0, scroller.frame.size.width, innerDynamicDataContainer.frame.size.height + 160);
-
     [scroller setContentSize:CGSizeMake(320, scrollerDynamicContentView.frame.size.height)];
 }
 
@@ -177,19 +172,13 @@
     if (IS_WIDESCREEN) {
         [profileHeaderImageView setImage:[UIImage imageNamed:@"profile-header1-300x568.png"]];
         [profileImageConstraintLeft setConstant:108];
-        streetLabelConstraint = [NSLayoutConstraint constraintWithItem:streetLabel
-                                                             attribute:NSLayoutAttributeRight
-                                                             relatedBy:NSLayoutRelationEqual
-                                                                toItem:self.view
-                                                             attribute:NSLayoutAttributeTrailing
-                                                            multiplier:1.0
-                                                              constant:-63];
-        [self.view addConstraint:streetLabelConstraint];
-
+        [pointsContainerLeftConstraint setConstant:206];
+        [emailButtonRightConstraint setConstant:103];
     }else{
         [profileHeaderImageView setImage:[UIImage imageNamed:@"profile-header1-300x460.png"]];
-        
+        [emailButtonRightConstraint setConstant:58];
         [profileImageConstraintLeft setConstant:62];
+        [pointsContainerLeftConstraint setConstant:159];
         
         streetLabelConstraint = [NSLayoutConstraint constraintWithItem:streetLabel
                                                              attribute:NSLayoutAttributeRight
@@ -312,6 +301,7 @@
         [[self phoneImageConstraint] setConstant:70];
         [[self scrollerBottomConstraint] setConstant:55];
         [pointsContainerLeftConstraint setConstant:114];
+        [emailButtonRightConstraint setConstant:16];
         landscape = NO;
     }
 
