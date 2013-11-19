@@ -399,6 +399,7 @@
 
 -(void)getLocations:(NSString *)latitude andLongitude:(NSString *)longitude andSpecialty:(NSString *)specialty andState:(NSString *)state andOrder:(NSString *)order
 {
+    
     [self.loading startAnimating];
 
     NSMutableDictionary *postParams = [[NSMutableDictionary alloc]init];
@@ -493,6 +494,8 @@
         }
         
         [self.loading stopAnimating];
+        
+                
         if ([categories isKindOfClass:[NSNull class]]) {
             UIAlertView *alert = [[UIAlertView alloc]
                                   initWithTitle:@"Alerta"

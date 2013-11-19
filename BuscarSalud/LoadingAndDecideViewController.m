@@ -207,8 +207,12 @@
             [defaults setObject:usernameEmail forKey:@"user_logged"];
             [defaults synchronize];            
             [self performSegueWithIdentifier:@"toProfile" sender:self];
-            self.tabBarItem.title = @"Mi Perfil";
+        }else{
+            UIAlertView *errorAlert = [[UIAlertView alloc]
+                                       initWithTitle:@"Error" message:@"Verfique su nombre de usuario y contraseña" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            [errorAlert show];
         }
+        NSLog(@"%@", response);
 
     } errorHandler:^(NSError* error){
     }];

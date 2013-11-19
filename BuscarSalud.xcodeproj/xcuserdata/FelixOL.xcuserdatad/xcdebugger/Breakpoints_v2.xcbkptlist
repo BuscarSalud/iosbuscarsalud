@@ -138,11 +138,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BuscarSalud/DoctorResultsViewController.m"
-            timestampString = "405497945.203845"
+            timestampString = "406530711.079112"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1148"
-            endingLineNumber = "1148"
+            startingLineNumber = "1151"
+            endingLineNumber = "1151"
             landmarkName = "-segmentSortingOptions:"
             landmarkType = "5">
          </BreakpointContent>
@@ -209,6 +209,22 @@
             endingLineNumber = "58"
             landmarkName = "@implementation GetProfileViewController"
             landmarkType = "3">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "BuscarSalud/DoctorResultsViewController.m"
+            timestampString = "406530711.079112"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "403"
+            endingLineNumber = "403"
+            landmarkName = "-getLocations:andLongitude:andSpecialty:andState:andOrder:"
+            landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
