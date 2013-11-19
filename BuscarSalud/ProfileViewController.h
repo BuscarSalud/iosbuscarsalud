@@ -33,10 +33,16 @@
 @property (weak, nonatomic) IBOutlet UILabel *stateLabel;
 @property (weak, nonatomic) IBOutlet UIImageView *phoneImageView;
 @property (weak, nonatomic) IBOutlet UIImageView *profileHeaderImageView;
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *profileHeaderWidthConstraint;
 
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *profileImageConstraintLeft;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *stateLabelConstraintLeft;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *scrollerBottomConstraint;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *phoneImageConstraint;
+@property (weak, nonatomic) IBOutlet UIView *scrollerDynamicContentView;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *emailButtonRightConstraint;
+@property (weak, nonatomic) IBOutlet UIImageView *pointsContainerView;
+
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *pointsContainerLeftConstraint;
 
 
 - (IBAction)goBack:(id)sender;
