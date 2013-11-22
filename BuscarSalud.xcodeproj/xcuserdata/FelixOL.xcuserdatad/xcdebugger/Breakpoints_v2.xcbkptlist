@@ -42,11 +42,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BuscarSalud/ProfileViewController.m"
-            timestampString = "406521205.666122"
+            timestampString = "406778309.717108"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "485"
-            endingLineNumber = "485"
+            startingLineNumber = "486"
+            endingLineNumber = "486"
             landmarkName = "-startLoadingBox"
             landmarkType = "5">
          </BreakpointContent>
@@ -58,11 +58,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BuscarSalud/ProfileViewController.m"
-            timestampString = "406521205.666122"
+            timestampString = "406778309.717108"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "432"
-            endingLineNumber = "432"
+            startingLineNumber = "433"
+            endingLineNumber = "433"
             landmarkName = "-setDoctor:"
             landmarkType = "5">
          </BreakpointContent>
@@ -154,11 +154,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BuscarSalud/ProfileViewController.m"
-            timestampString = "406521205.666122"
+            timestampString = "406778309.717108"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "520"
-            endingLineNumber = "520"
+            startingLineNumber = "521"
+            endingLineNumber = "521"
             landmarkName = "-createInfoDisplay:"
             landmarkType = "5">
          </BreakpointContent>

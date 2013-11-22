@@ -199,6 +199,7 @@
         doctorInfo = response;
         NSNumber *responseString = [response valueForKey:@"responseCode"];
         if ([responseString isEqualToNumber:@([@"1" integerValue])]) {
+            NSLog(@"Perfil Valido: %@", response);
             nid = [response valueForKey:@"nid"];
             loginSuccess = @"1";
             [defaults setObject:@"1" forKey:@"logged"];
