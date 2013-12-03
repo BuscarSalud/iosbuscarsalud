@@ -36,6 +36,7 @@
     NSData *imageTwo;
     int flagButton;
     NSDictionary *statesDictionary;
+    NSLayoutConstraint *nameTextFieldConstraint;
 }
 
 #define POSITION_VARIABLE_EXTRACT 130
@@ -45,7 +46,7 @@
 
 @implementation GetProfileViewController
 
-@synthesize flOperation, flUploadEngine, nameTextField, lastNameTextField, titleTextField, nicknameTextField, extractTextView, nameLabel, lastnameLabel, nicknameLabel, nicknameDescriptionLabel, titleLabel, titleDescriptionLabel, extractDescriptionLabel, extractLabel, charsRemainingNumberLabel, charsRemainingTextLabel, buttonNext, userInfoRequestDictionary, stat, requestObject, passFlag, uuid, requestOpenNoteLabel;
+@synthesize flOperation, flUploadEngine, nameTextField, lastNameTextField, titleTextField, nicknameTextField, extractTextView, nameLabel, lastnameLabel, nicknameLabel, nicknameDescriptionLabel, titleLabel, titleDescriptionLabel, extractDescriptionLabel, extractLabel, charsRemainingNumberLabel, charsRemainingTextLabel, buttonNext, userInfoRequestDictionary, stat, requestObject, passFlag, uuid, requestOpenNoteLabel, scroller, scrollerBottomConstraint;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -69,9 +70,11 @@
     nicknameTextField.delegate = self;
     extractTextView.delegate = self;
     flagButton = 0;
+    [scroller setContentSize:CGSizeMake(320, 330)];
     
     requestOpenNoteLabel.frame = CGRectMake(20, 370, 191, 28);
 
+    NSLog(@"%@", scroller);
     
     [[extractTextView layer] setBorderColor:[[UIColor colorWithRed:170/256.0 green:170/256.0 blue:170/256.0 alpha:1.0] CGColor]];
     [[extractTextView layer] setBorderWidth:2.3];
@@ -126,6 +129,10 @@
         NSLog(@"Stat array %@", stat);
     } errorHandler:^(NSError* error){
     }];
+    
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]
+                                   initWithTarget:self action:@selector(dismissKeyboard)];
+    [self.view addGestureRecognizer:tap];
 }
 
 -(void)viewDidAppear:(BOOL)animated
@@ -288,7 +295,41 @@
     
 }*/
 
-- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+-(void)viewDidLayoutSubviews{
+    [scroller setContentSize:CGSizeMake(320, 330)];
+}
+
+-(void)handleInterfaceOrientation{
+    [scroller setContentOffset:CGPointMake(0, 0)];
+    nameTextFieldConstraint = [NSLayoutConstraint constraintWithItem:nameTextField
+                                                            attribute:NSLayoutAttributeRight
+                                                            relatedBy:NSLayoutRelationEqual
+                                                               toItem:self.view
+                                                            attribute:NSLayoutAttributeTrailing
+                                                           multiplier:1.0
+                                                             constant:-35];
+    [self.view addConstraint:nameTextFieldConstraint];
+    
+    
+}
+
+-(void) willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+{
+    if (toInterfaceOrientation == UIInterfaceOrientationLandscapeLeft) {
+        NSLog(@"Landscape Left - Scroller: %@", scroller);
+        [self handleInterfaceOrientation];
+    }
+    if (toInterfaceOrientation == UIInterfaceOrientationLandscapeRight) {
+        NSLog(@"Landscape Right - Scroller: %@", scroller);
+        [self handleInterfaceOrientation];
+    }
+    if (toInterfaceOrientation == UIInterfaceOrientationPortrait) {
+        NSLog(@"Portrait - Scroller: %@", scroller);
+        [nameTextFieldConstraint setConstant:-19];
+    }
+}
+
+- (void)dismissKeyboard
 {
     [nameTextField resignFirstResponder];
     [lastNameTextField resignFirstResponder];
@@ -303,32 +344,11 @@
     if ([passFlag isEqualToString:@"0"]) {
         [textField setEnabled:NO];
     }
-    nameFieldFrame = nameTextField.frame;
-    lastnameFieldFrame = lastNameTextField.frame;
-    nicknameFieldFrame = nicknameTextField.frame;
-    titleFieldFrame = titleTextField.frame;
-    nameLabelFrame = nameLabel.frame;
-    lastnameLabelFrame = lastnameLabel.frame;
-    nicknameLabelFrame = nicknameLabel.frame;
-    titleLabelFrame  = titleLabel.frame;
-    extractLabelFrame = extractLabel.frame;
-    nicknameDescriptionFrame = nicknameDescriptionLabel.frame;
-    titleDescriptionFrame = titleDescriptionLabel.frame;
-    NSLog(@"Field focus in Titulo, orginal: %f", titleLabelFrame.origin.y);
-
+    
     switch (textField.tag) {
         case 401:
-            nameFieldFrame.origin.y = nameFieldFrame.origin.y - POSITION_VARIABLE_TITLE;
-            lastnameFieldFrame.origin.y = lastnameFieldFrame.origin.y - POSITION_VARIABLE_TITLE;
-            nicknameFieldFrame.origin.y = nicknameFieldFrame.origin.y - POSITION_VARIABLE_TITLE;
-            titleFieldFrame.origin.y = titleFieldFrame.origin.y - POSITION_VARIABLE_TITLE;
-            nameLabelFrame.origin.y = nameLabelFrame.origin.y - POSITION_VARIABLE_TITLE;
-            lastnameLabelFrame.origin.y = lastnameLabelFrame.origin.y - POSITION_VARIABLE_TITLE;
-            nicknameLabelFrame.origin.y = nicknameLabelFrame.origin.y - POSITION_VARIABLE_TITLE;
-            titleLabelFrame.origin.y = titleLabelFrame.origin.y - POSITION_VARIABLE_TITLE;
-            nicknameDescriptionFrame.origin.y = nicknameDescriptionFrame.origin.y - POSITION_VARIABLE_TITLE;
-            titleDescriptionFrame.origin.y = titleDescriptionFrame.origin.y - POSITION_VARIABLE_TITLE;            
-            NSLog(@"Field focus in Titulo, %f", titleLabelFrame.origin.y);
+            [scrollerBottomConstraint setConstant:-60];
+            NSLog(@"Title field selected");
             break;
         case 101:
             NSLog(@"Field focus in Nombre");
@@ -349,21 +369,7 @@
         default:
             break;
     }
-    
-    [UIView animateWithDuration:0.3 animations:^{
-        NSLog(@"Animate!  Frame: %f", titleFieldFrame.origin.y);
-        nameTextField.frame = nameFieldFrame;
-        lastNameTextField.frame = lastnameFieldFrame;
-        nicknameTextField.frame = nicknameFieldFrame;
-        titleTextField.frame = titleFieldFrame;
-        nameLabel.frame = nameLabelFrame;
-        lastnameLabel.frame = lastnameLabelFrame;
-        nicknameLabel.frame = nicknameLabelFrame;
-        titleLabel.frame = titleLabelFrame;
-        nicknameDescriptionLabel.frame = nicknameDescriptionFrame;
-        titleDescriptionLabel.frame = titleDescriptionFrame;
-        
-    }];
+
 
     
     
@@ -371,31 +377,9 @@
 
 -(void)textFieldDidEndEditing:(UITextField *)textField
 {
-    nameFieldFrame = nameTextField.frame;
-    lastnameFieldFrame = lastNameTextField.frame;
-    nicknameFieldFrame = nicknameTextField.frame;
-    titleFieldFrame = titleTextField.frame;
-    nameLabelFrame = nameLabel.frame;
-    lastnameLabelFrame = lastnameLabel.frame;
-    nicknameLabelFrame = nicknameLabel.frame;
-    titleLabelFrame  = titleLabel.frame;
-    extractLabelFrame = extractLabel.frame;
-    nicknameDescriptionFrame = nicknameDescriptionLabel.frame;
-    titleDescriptionFrame = titleDescriptionLabel.frame;
-    
-    
     switch (textField.tag) {
         case 401:
-            nameFieldFrame.origin.y = nameFieldFrame.origin.y + POSITION_VARIABLE_TITLE;
-            lastnameFieldFrame.origin.y = lastnameFieldFrame.origin.y + POSITION_VARIABLE_TITLE;
-            nicknameFieldFrame.origin.y = nicknameFieldFrame.origin.y + POSITION_VARIABLE_TITLE;
-            titleFieldFrame.origin.y = titleFieldFrame.origin.y + POSITION_VARIABLE_TITLE;
-            nameLabelFrame.origin.y = nameLabelFrame.origin.y - POSITION_VARIABLE_TITLE;
-            lastnameLabelFrame.origin.y = lastnameLabelFrame.origin.y + POSITION_VARIABLE_TITLE;
-            nicknameLabelFrame.origin.y = nicknameLabelFrame.origin.y + POSITION_VARIABLE_TITLE;
-            titleLabelFrame.origin.y = titleLabelFrame.origin.y + POSITION_VARIABLE_TITLE;
-            nicknameDescriptionFrame.origin.y = nicknameDescriptionFrame.origin.y + POSITION_VARIABLE_TITLE;
-            titleDescriptionFrame.origin.y = titleDescriptionFrame.origin.y + POSITION_VARIABLE_TITLE;
+            
             break;
         case 101:
             NSLog(@"Field focus in Nombre");
@@ -416,23 +400,6 @@
         default:
             break;
     }
-        
-        
-   // }
-    [UIView animateWithDuration:0.3 animations:^{
-        nameTextField.frame = nameFieldFrame;
-        lastNameTextField.frame = lastnameFieldFrame;
-        nicknameTextField.frame = nicknameFieldFrame;
-        titleTextField.frame = titleFieldFrame;
-        nameLabel.frame = nameLabelFrame;
-        lastnameLabel.frame = lastnameLabelFrame;
-        nicknameLabel.frame = nicknameLabelFrame;
-        titleLabel.frame = titleLabelFrame;
-        nicknameDescriptionLabel.frame = nicknameDescriptionFrame;
-        titleDescriptionLabel.frame = titleDescriptionFrame;
-        
-    }];
-
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
@@ -442,94 +409,19 @@
 
 -(void)textViewDidBeginEditing:(UITextView *)textView
 {
-    extractFieldFrame = extractTextView.frame;
-    nameFieldFrame = nameTextField.frame;
-    lastnameFieldFrame = lastNameTextField.frame;
-    nicknameFieldFrame = nicknameTextField.frame;
-    titleFieldFrame = titleTextField.frame;
-    nameLabelFrame = nameLabel.frame;
-    lastnameLabelFrame = lastnameLabel.frame;
-    nicknameLabelFrame = nicknameLabel.frame;
-    titleLabelFrame  = titleLabel.frame;
-    extractLabelFrame = extractLabel.frame;
-    nicknameDescriptionFrame = nicknameDescriptionLabel.frame;
-    titleDescriptionFrame = titleDescriptionLabel.frame;
-    extractDescriptionFrame = extractDescriptionLabel.frame;
-    charsRemainingNumberFrame = charsRemainingNumberLabel.frame;
-    charsRemainingTextFrame = charsRemainingTextLabel.frame;
-
-    
-    nameFieldFrame.origin.y = nameFieldFrame.origin.y - POSITION_VARIABLE_EXTRACT;
-    lastnameFieldFrame.origin.y = lastnameFieldFrame.origin.y - POSITION_VARIABLE_EXTRACT;
-    nicknameFieldFrame.origin.y = nicknameFieldFrame.origin.y - POSITION_VARIABLE_EXTRACT;
-    titleFieldFrame.origin.y = titleFieldFrame.origin.y - POSITION_VARIABLE_EXTRACT;
-    extractFieldFrame.origin.y = extractFieldFrame.origin.y - POSITION_VARIABLE_EXTRACT;
-    nameLabelFrame.origin.y = nameLabelFrame.origin.y - POSITION_VARIABLE_EXTRACT;
-    lastnameLabelFrame.origin.y = lastnameLabelFrame.origin.y - POSITION_VARIABLE_EXTRACT;
-    nicknameLabelFrame.origin.y = nicknameLabelFrame.origin.y - POSITION_VARIABLE_EXTRACT;
-    titleLabelFrame.origin.y = titleLabelFrame.origin.y - POSITION_VARIABLE_EXTRACT;
-    extractLabelFrame.origin.y = extractLabelFrame.origin.y - POSITION_VARIABLE_EXTRACT;
-    nicknameDescriptionFrame.origin.y = nicknameDescriptionFrame.origin.y - POSITION_VARIABLE_EXTRACT;
-    titleDescriptionFrame.origin.y = titleDescriptionFrame.origin.y - POSITION_VARIABLE_EXTRACT;
-    extractDescriptionFrame.origin.y = extractDescriptionFrame.origin.y - POSITION_VARIABLE_EXTRACT;
-    charsRemainingTextFrame.origin.y = charsRemainingTextFrame.origin.y - POSITION_VARIABLE_EXTRACT;
-    charsRemainingNumberFrame.origin.y = charsRemainingNumberFrame.origin.y - POSITION_VARIABLE_EXTRACT;
-    
-    [UIView animateWithDuration:0.2 animations:^{
-        nameTextField.frame = nameFieldFrame;
-        lastNameTextField.frame = lastnameFieldFrame;
-        nicknameTextField.frame = nicknameFieldFrame;
-        titleTextField.frame = titleFieldFrame;
-        extractTextView.frame = extractFieldFrame;
-        nameLabel.frame = nameLabelFrame;
-        lastnameLabel.frame = lastnameLabelFrame;
-        nicknameLabel.frame = nicknameLabelFrame;
-        titleLabel.frame = titleLabelFrame;
-        extractLabel.frame = extractLabelFrame;
-        nicknameDescriptionLabel.frame = nicknameDescriptionFrame;
-        titleDescriptionLabel.frame = titleDescriptionFrame;
-        extractDescriptionLabel.frame = extractDescriptionFrame;
-        charsRemainingNumberLabel.frame = charsRemainingNumberFrame;
-        charsRemainingTextLabel.frame = charsRemainingTextFrame;
+    [UIView animateWithDuration:0.3 animations:^{
+        [scroller setContentOffset:CGPointMake(0, -20)];
+        NSLog(@"Text field selected");
     }];
 }
 
 -(void)textViewDidEndEditing:(UITextView *)textView
 {
-    nameFieldFrame.origin.y = nameFieldFrame.origin.y + POSITION_VARIABLE_EXTRACT;
-    lastnameFieldFrame.origin.y = lastnameFieldFrame.origin.y + POSITION_VARIABLE_EXTRACT;
-    nicknameFieldFrame.origin.y = nicknameFieldFrame.origin.y + POSITION_VARIABLE_EXTRACT;
-    titleFieldFrame.origin.y = titleFieldFrame.origin.y + POSITION_VARIABLE_EXTRACT;
-    extractFieldFrame.origin.y = extractFieldFrame.origin.y + POSITION_VARIABLE_EXTRACT;
-    nameLabelFrame.origin.y = nameLabelFrame.origin.y + POSITION_VARIABLE_EXTRACT;
-    lastnameLabelFrame.origin.y = lastnameLabelFrame.origin.y + POSITION_VARIABLE_EXTRACT;
-    nicknameLabelFrame.origin.y = nicknameLabelFrame.origin.y + POSITION_VARIABLE_EXTRACT;
-    titleLabelFrame.origin.y = titleLabelFrame.origin.y + POSITION_VARIABLE_EXTRACT;
-    extractLabelFrame.origin.y = extractLabelFrame.origin.y + POSITION_VARIABLE_EXTRACT;
-    nicknameDescriptionFrame.origin.y = nicknameDescriptionFrame.origin.y + POSITION_VARIABLE_EXTRACT;
-    titleDescriptionFrame.origin.y = titleDescriptionFrame.origin.y + POSITION_VARIABLE_EXTRACT;
-    extractDescriptionFrame.origin.y = extractDescriptionFrame.origin.y + POSITION_VARIABLE_EXTRACT;
-    charsRemainingTextFrame.origin.y = charsRemainingTextFrame.origin.y + POSITION_VARIABLE_EXTRACT;
-    charsRemainingNumberFrame.origin.y = charsRemainingNumberFrame.origin.y + POSITION_VARIABLE_EXTRACT;
-
-    
-    [UIView animateWithDuration:0.2 animations:^{
-        nameTextField.frame = nameFieldFrame;
-        lastNameTextField.frame = lastnameFieldFrame;
-        nicknameTextField.frame = nicknameFieldFrame;
-        titleTextField.frame = titleFieldFrame;
-        extractTextView.frame = extractFieldFrame;
-        nameLabel.frame = nameLabelFrame;
-        lastnameLabel.frame = lastnameLabelFrame;
-        nicknameLabel.frame = nicknameLabelFrame;
-        titleLabel.frame = titleLabelFrame;
-        extractLabel.frame = extractLabelFrame;
-        nicknameDescriptionLabel.frame = nicknameDescriptionFrame;
-        titleDescriptionLabel.frame = titleDescriptionFrame;
-        extractDescriptionLabel.frame = extractDescriptionFrame;
-        charsRemainingNumberLabel.frame = charsRemainingNumberFrame;
-        charsRemainingTextLabel.frame = charsRemainingTextFrame;
+    [UIView animateWithDuration:0.3 animations:^{
+        [scroller setContentOffset:CGPointMake(0, -60)];
+        NSLog(@"Text field selected");
     }];
+
 }
 
 
@@ -571,8 +463,15 @@
     return NO;
 }
 
+-(void)viewWillAppear:(BOOL)animated
+{
+    [scroller setContentOffset:CGPointMake(0, 0)];
+    
+}
+
 - (IBAction)buttonNext:(id)sender {
    
+    
     if ([nameTextField.text isEqualToString:@""] || [lastNameTextField.text isEqualToString:@""]) {
         if ([nameTextField.text isEqualToString:@""]) {
             nameLabel.textColor = [UIColor redColor];
@@ -611,6 +510,8 @@
         [userInfoRequestDictionary setValue:generalInfo forKey:@"general"];
         [userInfoRequestDictionary setValue:uuid forKey:@"uuid"];
         
+        [self performSegueWithIdentifier:@"generalToContactInfo" sender:self];
+        
         // **************************
         /*
         self.flUploadEngine = [[fileUploadEngine alloc] initWithHostName:@"ws.buscarsalud.local" customHeaderFields:nil];
@@ -643,8 +544,6 @@
         
         // ***************************
     */
-        
-        [self performSegueWithIdentifier:@"generalToContactInfo" sender:self];
     } 
     
 }

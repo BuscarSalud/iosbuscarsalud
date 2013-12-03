@@ -36,6 +36,8 @@
 @property (weak, nonatomic) IBOutlet UILabel *charsRemainingTextLabel;
 @property (weak, nonatomic) IBOutlet UILabel *charsRemainingNumberLabel;
 @property (weak, nonatomic) IBOutlet UILabel *requestOpenNoteLabel;
+@property (weak, nonatomic) IBOutlet UIScrollView *scroller;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *scrollerBottomConstraint;
 
 @property (weak, nonatomic) IBOutlet UIButton *buttonNext;
 

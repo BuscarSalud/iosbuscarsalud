@@ -195,8 +195,9 @@
             case 105:
                 yValue = -5;
                 bottomOffset = 0;
-                NSLog(@"Value y = %d", yValue);
+                NSLog(@"Codigo postal In. Value y = %d", yValue);
                 flag = YES;
+                [scroller setContentOffset:CGPointZero animated:YES];
                 break;
             case 106:
                 yValue = -155;
@@ -221,11 +222,12 @@
                 break;
         }
         if (flag == YES) {
-            [UIView animateWithDuration:0.3 animations:^{
-                [scroller setContentOffset:CGPointMake(0, bottomOffset)];
+            //[scroller setContentOffset:CGPointMake(0, bottomOffset) animated:YES];
+            /*[UIView animateWithDuration:0.3 animations:^{
                 [UIView setAnimationBeginsFromCurrentState:YES];
-                scroller.frame = CGRectMake(0, yValue, scroller.frame.size.width, scroller.frame.size.height);
-            }];
+                [scroller setContentOffset:CGPointMake(0, bottomOffset)];
+                //scroller.frame = CGRectMake(0, yValue, scroller.frame.size.width, scroller.frame.size.height);
+            }];*/
         }else{
             NSLog(@"Nooooo");
         }
@@ -241,8 +243,9 @@
         case 105:
             yValue = 0;
             bottomOffset = 0;
-            NSLog(@"Value y = %d", yValue);
+            NSLog(@"COdigo postal out. Value y = %d", yValue);
             flag = YES;
+            [scroller setContentOffset:CGPointMake(0, 0) animated:YES];
             break;
         case 106:
             yValue = 0;
@@ -267,11 +270,12 @@
             break;
     }
     if (flag == YES) {
-        [UIView animateWithDuration:0.3 animations:^{
-            [scroller setContentOffset:CGPointMake(0, bottomOffset)];
+        [scroller setContentOffset:CGPointMake(0, bottomOffset) animated:YES];
+        /*[UIView animateWithDuration:0.3 animations:^{
             [UIView setAnimationBeginsFromCurrentState:YES];
-            scroller.frame = CGRectMake(0, yValue, scroller.frame.size.width, scroller.frame.size.height);
-        }];
+            [scroller setContentOffset:CGPointMake(0, bottomOffset)];
+            //scroller.frame = CGRectMake(0, yValue, scroller.frame.size.width, scroller.frame.size.height);
+        }];*/
     }else{
         NSLog(@"Nooooo");
     }
