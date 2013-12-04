@@ -9,10 +9,13 @@
 #import <UIKit/UIKit.h>
 #import "fileUploadEngine.h"
 #import <QuartzCore/QuartzCore.h>
+#import "GADBannerView.h"
 
 
 @interface GetProfileViewController : UIViewController <UIActionSheetDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate, UITextViewDelegate>{
-    
+    GADBannerView *bannerView_;
+    GADBannerView *bannerViewOther_;
+
     UIImageView *containerView;
 }
 
@@ -38,6 +41,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *requestOpenNoteLabel;
 @property (weak, nonatomic) IBOutlet UIScrollView *scroller;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *scrollerBottomConstraint;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *bannerNextBottomConstraint;
 
 @property (weak, nonatomic) IBOutlet UIButton *buttonNext;
 

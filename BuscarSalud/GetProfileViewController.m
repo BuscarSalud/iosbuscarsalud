@@ -37,8 +37,11 @@
     int flagButton;
     NSDictionary *statesDictionary;
     NSLayoutConstraint *nameTextFieldConstraint;
+    BOOL landscape;
+    BOOL titleSelected;
 }
 
+#define IS_WIDESCREEN ( [ [ UIScreen mainScreen ] bounds ].size.height == 568 )
 #define POSITION_VARIABLE_EXTRACT 130
 #define POSITION_VARIABLE_TITLE 25
 
@@ -46,7 +49,7 @@
 
 @implementation GetProfileViewController
 
-@synthesize flOperation, flUploadEngine, nameTextField, lastNameTextField, titleTextField, nicknameTextField, extractTextView, nameLabel, lastnameLabel, nicknameLabel, nicknameDescriptionLabel, titleLabel, titleDescriptionLabel, extractDescriptionLabel, extractLabel, charsRemainingNumberLabel, charsRemainingTextLabel, buttonNext, userInfoRequestDictionary, stat, requestObject, passFlag, uuid, requestOpenNoteLabel, scroller, scrollerBottomConstraint;
+@synthesize flOperation, flUploadEngine, nameTextField, lastNameTextField, titleTextField, nicknameTextField, extractTextView, nameLabel, lastnameLabel, nicknameLabel, nicknameDescriptionLabel, titleLabel, titleDescriptionLabel, extractDescriptionLabel, extractLabel, charsRemainingNumberLabel, charsRemainingTextLabel, buttonNext, userInfoRequestDictionary, stat, requestObject, passFlag, uuid, requestOpenNoteLabel, scroller, scrollerBottomConstraint, bannerNextBottomConstraint;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -130,9 +133,85 @@
     } errorHandler:^(NSError* error){
     }];
     
+    [self showBanner];
+    
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]
                                    initWithTarget:self action:@selector(dismissKeyboard)];
     [self.view addGestureRecognizer:tap];
+}
+
+-(void) willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
+    
+    [bannerView_ removeFromSuperview];
+    if (toInterfaceOrientation == UIInterfaceOrientationLandscapeLeft) {
+        NSLog(@"Landscape left");
+        bannerView_ = [[GADBannerView alloc] initWithAdSize:kGADAdSizeSmartBannerLandscape origin:CGPointMake(0.0, 340.0)];
+    } else if (toInterfaceOrientation == UIInterfaceOrientationLandscapeRight) {
+        NSLog(@"Landscape right");
+        bannerView_ = [[GADBannerView alloc] initWithAdSize:kGADAdSizeSmartBannerLandscape origin:CGPointMake(0.0, 340.0)];
+    } else if (toInterfaceOrientation == UIInterfaceOrientationPortrait) {
+        NSLog(@"Portrait");
+        bannerView_ = [[GADBannerView alloc] initWithFrame:CGRectMake(0.0,
+                                                                      361.0,
+                                                                      GAD_SIZE_320x50.width,
+                                                                      GAD_SIZE_320x50.height)];
+    }
+    bannerView_.translatesAutoresizingMaskIntoConstraints=NO;
+    
+    // Specify the ad's "unit identifier". This is your AdMob Publisher ID.
+    bannerView_.adUnitID = @"ca-app-pub-5383770617488734/3234786808";
+    
+    bannerView_.rootViewController = self;
+    [self.view addSubview:bannerView_];
+    
+    
+    // Constraint keeps ad at the bottom of the screen at all times.
+    [self.view addConstraint:
+     [NSLayoutConstraint constraintWithItem:bannerView_
+                                  attribute:NSLayoutAttributeBottom
+                                  relatedBy:NSLayoutRelationEqual
+                                     toItem:self.view
+                                  attribute:NSLayoutAttributeBottom
+                                 multiplier:1.0
+                                   constant:0]];
+    
+    // Constraint keeps ad in the center of the screen at all times.
+    [self.view addConstraint:
+     [NSLayoutConstraint constraintWithItem:bannerView_
+                                  attribute:NSLayoutAttributeCenterX
+                                  relatedBy:NSLayoutRelationEqual
+                                     toItem:self.view
+                                  attribute:NSLayoutAttributeCenterX
+                                 multiplier:1.0
+                                   constant:0]];
+    
+    GADRequest *request = [GADRequest request];
+    
+    // Make the request for a test ad. Put in an identifier for
+    // the simulator as well as any devices you want to receive test ads.
+    /*request.testDevices = [NSArray arrayWithObjects:
+     @"045BB3DE-3CF2-5B56-94AF-85CFDA9C7D1E",
+     nil];*/
+    
+    request.testDevices = [NSArray arrayWithObjects:@"33c1dd26714bf1d45a6e583a9b626399",@"70f54509aae055dd2d199fc2711f3839", @"caa0817cc94ac9288769e327e4751387", GAD_SIMULATOR_ID, nil];
+    
+    // Initiate a generic request to load it with an ad.
+    [bannerView_ loadRequest:request];
+    
+    if (toInterfaceOrientation == UIInterfaceOrientationLandscapeLeft) {
+        NSLog(@"Landscape left");
+        [[self bannerNextBottomConstraint] setConstant:32];
+    } else if (toInterfaceOrientation == UIInterfaceOrientationLandscapeRight) {
+        NSLog(@"Landscape right");
+        [[self bannerNextBottomConstraint] setConstant:32];
+    } else if (toInterfaceOrientation == UIInterfaceOrientationPortrait) {
+        NSLog(@"Portrait");
+        [[self bannerNextBottomConstraint] setConstant:50];
+    }
+    
+    
+    
+    
 }
 
 -(void)viewDidAppear:(BOOL)animated
@@ -297,10 +376,12 @@
 
 -(void)viewDidLayoutSubviews{
     [scroller setContentSize:CGSizeMake(320, 330)];
+    [scroller setContentOffset:CGPointMake(0, -60)];
 }
 
 -(void)handleInterfaceOrientation{
     [scroller setContentOffset:CGPointMake(0, 0)];
+    [self.view removeConstraint:nameTextFieldConstraint];
     nameTextFieldConstraint = [NSLayoutConstraint constraintWithItem:nameTextField
                                                             attribute:NSLayoutAttributeRight
                                                             relatedBy:NSLayoutRelationEqual
@@ -317,14 +398,17 @@
 {
     if (toInterfaceOrientation == UIInterfaceOrientationLandscapeLeft) {
         NSLog(@"Landscape Left - Scroller: %@", scroller);
+        landscape = YES;
         [self handleInterfaceOrientation];
     }
     if (toInterfaceOrientation == UIInterfaceOrientationLandscapeRight) {
         NSLog(@"Landscape Right - Scroller: %@", scroller);
+        landscape = YES;
         [self handleInterfaceOrientation];
     }
     if (toInterfaceOrientation == UIInterfaceOrientationPortrait) {
         NSLog(@"Portrait - Scroller: %@", scroller);
+        landscape = NO;
         [nameTextFieldConstraint setConstant:-19];
     }
 }
@@ -346,9 +430,19 @@
     }
     
     switch (textField.tag) {
-        case 401:
-            [scrollerBottomConstraint setConstant:-60];
+        case 401:            
             NSLog(@"Title field selected");
+            if (!IS_WIDESCREEN) {
+                if (landscape) {
+                    [self animateContentOffset:55];
+                }else{
+                    [self animateContentOffset:-40];
+                }
+            }else{
+                if (landscape) {
+                    [self animateContentOffset:55];
+                }
+            }
             break;
         case 101:
             NSLog(@"Field focus in Nombre");
@@ -364,37 +458,60 @@
             break;
         case 301:
             NSLog(@"Field focus in Nickname");
+            if (landscape) {
+                [self animateContentOffset:-5];
+            }
             break;
             
         default:
             break;
     }
+}
 
-
-    
-    
+-(void)animateContentOffset:(CGFloat)offset{
+    [UIView animateWithDuration:0.3 animations:^{
+        [scroller setContentOffset:CGPointMake(0, offset)];
+        NSLog(@"Text field selected");
+    }];
 }
 
 -(void)textFieldDidEndEditing:(UITextField *)textField
 {
     switch (textField.tag) {
         case 401:
-            
+            NSLog(@"Title focus out Nombre");
+            if (!IS_WIDESCREEN) {
+                if (landscape) {
+                    [self animateContentOffset:0];
+                }else{
+                    [self animateContentOffset:-60];
+                }
+            }else{
+                if (landscape) {
+                    [self animateContentOffset:0];
+                }
+            }
+            /*if (landscape) {
+                [self animateContentOffset:0];
+            }*/
             break;
         case 101:
-            NSLog(@"Field focus in Nombre");
+            NSLog(@"Field focus out Nombre");
             if (![nameTextField.text isEqualToString:@""]) {
                 nameLabel.textColor = [UIColor blackColor];
             }
             break;
         case 201:
-            NSLog(@"Field focus in Apellido");
+            NSLog(@"Field focus out Apellido");
             if (![lastNameTextField.text isEqualToString:@""]) {
                 lastnameLabel.textColor = [UIColor blackColor];
             }
             break;
         case 301:
             NSLog(@"Field focus out Nickname");
+            if (landscape) {
+                [self animateContentOffset:-60];
+            }
             break;
             
         default:
@@ -409,19 +526,28 @@
 
 -(void)textViewDidBeginEditing:(UITextView *)textView
 {
-    [UIView animateWithDuration:0.3 animations:^{
-        [scroller setContentOffset:CGPointMake(0, -20)];
-        NSLog(@"Text field selected");
-    }];
+    if (IS_WIDESCREEN) {
+        if (landscape) {
+            [self animateContentOffset:165];
+        }else{
+            [self animateContentOffset:-20];
+        }
+    }else{
+        if (landscape) {
+            [self animateContentOffset:165];
+        }else{
+            [self animateContentOffset:60];
+        }
+    }
 }
 
 -(void)textViewDidEndEditing:(UITextView *)textView
 {
-    [UIView animateWithDuration:0.3 animations:^{
-        [scroller setContentOffset:CGPointMake(0, -60)];
-        NSLog(@"Text field selected");
-    }];
-
+    if (landscape) {
+        [self animateContentOffset:90];
+    }else{
+        [self animateContentOffset:-60];
+    }
 }
 
 
@@ -546,6 +672,103 @@
     */
     } 
     
+}
+
+-(void)showBanner{
+    UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
+    
+    if (orientation == UIInterfaceOrientationLandscapeLeft) {
+        NSLog(@"Landscape left");
+        bannerView_ = [[GADBannerView alloc] initWithAdSize:kGADAdSizeSmartBannerLandscape origin:CGPointMake(0.0, 340.0)];
+        landscape = YES;
+        /*[self.view addConstraint:
+         [NSLayoutConstraint constraintWithItem:self.view
+                                      attribute:NSLayoutAttributeBottom
+                                      relatedBy:NSLayoutRelationEqual
+                                         toItem:bannerView_
+                                      attribute:NSLayoutAttributeBaseline
+                                     multiplier:1.0
+                                       constant:-37]];*/
+        //[self startLoadingBox];
+        NSLog(@"Landscape set to YES in didLoad");
+    } else if (orientation == UIInterfaceOrientationLandscapeRight) {
+        NSLog(@"Landscape right");
+        bannerView_ = [[GADBannerView alloc] initWithAdSize:kGADAdSizeSmartBannerLandscape origin:CGPointMake(0.0, 340.0)];
+        landscape = YES;
+        /*[self.view addConstraint:
+         [NSLayoutConstraint constraintWithItem:self.view
+                                      attribute:NSLayoutAttributeBottom
+                                      relatedBy:NSLayoutRelationEqual
+                                         toItem:bannerView_
+                                      attribute:NSLayoutAttributeBaseline
+                                     multiplier:1.0
+                                       constant:-37]];*/
+        //[self startLoadingBox];
+        NSLog(@"Landscape set to YES in didLoad");
+    } else if (orientation == UIInterfaceOrientationPortrait) {
+        NSLog(@"Portrait");
+        /*bannerView_ = [[GADBannerView alloc] initWithFrame:CGRectMake(0.0,
+         361.0,
+         GAD_SIZE_320x50.width,
+         GAD_SIZE_320x50.height)];*/
+        bannerView_ = [[GADBannerView alloc] initWithAdSize:kGADAdSizeSmartBannerPortrait origin:CGPointMake(0.0, 340.0)];
+        /*[self.view addConstraint:
+         [NSLayoutConstraint constraintWithItem:self.view
+                                      attribute:NSLayoutAttributeBottom
+                                      relatedBy:NSLayoutRelationEqual
+                                         toItem:bannerView_
+                                      attribute:NSLayoutAttributeBaseline
+                                     multiplier:1.0
+                                       constant:-55]];*/
+        //[self startLoadingBox];
+        landscape = NO;
+    }
+    
+    bannerView_.translatesAutoresizingMaskIntoConstraints=NO;
+    
+    // Specify the ad's "unit identifier". This is your AdMob Publisher ID.
+    bannerView_.adUnitID = @"ca-app-pub-5383770617488734/3234786808";
+    
+    // Let the runtime know which UIViewController to restore after taking
+    // the user wherever the ad goes and add it to the view hierarchy.
+    bannerView_.rootViewController = self;
+    [self.view addSubview:bannerView_];
+    
+    // Constraint keeps ad at the bottom of the screen at all times.
+    [self.view addConstraint:
+     [NSLayoutConstraint constraintWithItem:bannerView_
+                                  attribute:NSLayoutAttributeBottom
+                                  relatedBy:NSLayoutRelationEqual
+                                     toItem:self.view
+                                  attribute:NSLayoutAttributeBottom
+                                 multiplier:1.0
+                                   constant:0]];
+    
+    // Constraint keeps ad in the center of the screen at all times.
+    [self.view addConstraint:
+     [NSLayoutConstraint constraintWithItem:bannerView_
+                                  attribute:NSLayoutAttributeCenterX
+                                  relatedBy:NSLayoutRelationEqual
+                                     toItem:self.view
+                                  attribute:NSLayoutAttributeCenterX
+                                 multiplier:1.0
+                                   constant:0]];
+    
+    
+    
+    
+    GADRequest *request = [GADRequest request];
+    
+    // Make the request for a test ad. Put in an identifier for
+    // the simulator as well as any devices you want to receive test ads.
+    /*request.testDevices = [NSArray arrayWithObjects:
+     @"045BB3DE-3CF2-5B56-94AF-85CFDA9C7D1E",
+     nil];*/
+    
+    request.testDevices = [NSArray arrayWithObjects:@"33c1dd26714bf1d45a6e583a9b626399",@"70f54509aae055dd2d199fc2711f3839", @"caa0817cc94ac9288769e327e4751387", GAD_SIMULATOR_ID, nil];
+    
+    // Initiate a generic request to load it with an ad.
+    [bannerView_ loadRequest:request];
 }
 
 

@@ -202,11 +202,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BuscarSalud/GetProfileViewController.m"
-            timestampString = "407746382.083326"
+            timestampString = "407824700.936879"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "59"
-            endingLineNumber = "59"
+            startingLineNumber = "62"
+            endingLineNumber = "62"
             landmarkName = "@implementation GetProfileViewController"
             landmarkType = "3">
          </BreakpointContent>
